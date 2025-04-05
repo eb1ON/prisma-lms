@@ -1,157 +1,171 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model Users {
-    id      String @id @default(cuid())
-    user_id String @unique
+  id      String @id @default(cuid())
+  user_id String @unique
 
-    name          String
-    role          Role
-    school_year   Int?
-    email         String          @unique
-    password      String
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    // Optional for WebAuthn support
-    Authenticator Authenticator[]
+  name          String
+  role          Role
+  school_year   Int?
+  email         String          @unique
+  password      String
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
 
-    createdAt   DateTime      @default(now())
-    updatedAt   DateTime      @updatedAt
-    Lesson_list Lesson_list[]
-    Timetable   Timetable[]
-    Lesson      Lesson[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Lesson_list Lesson_list[]
+  Timetable   Timetable[]
+  Lesson      Lesson[]
+  Assignment  Assignment[]
 }
 
 model Lesson_list {
-    id String @id @default(cuid())
+  id String @id @default(cuid())
 
-    lesson_code String    @unique
-    lesson_name String
-    credits     Int
-    description String?
-    teacher     Users?    @relation(fields: [teacher_id], references: [user_id])
-    teacher_id  String?
-    school_year Int?
-    type        TypesGP?
-    semester    Semester?
+  lesson_code String    @unique
+  lesson_name String
+  credits     Int
+  description String?
+  teacher     Users?    @relation(fields: [teacher_id], references: [user_id])
+  teacher_id  String?
+  school_year Int?
+  type        TypesGP?
+  semester    Semester?
 
-    Timetable Timetable[]
-    Lesson    Lesson[]
+  Timetable Timetable[]
+  Lesson    Lesson[]
 }
 
 model Lesson {
-    id          Int         @id @default(autoincrement())
-    lessonCode  String
-    title       String
-    description String?
-    pdfUrl      String? // PDF URL
-    videoUrl    String?
-    school_year Int?
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
-    teacherId   String
-    Code        Lesson_list @relation(fields: [lessonCode], references: [lesson_code])
+  id          Int         @id @default(autoincrement())
+  lessonCode  String
+  title       String
+  description String?
+  pdfUrl      String? // PDF URL
+  videoUrl    String?
+  school_year Int?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  teacherId   String
+  Code        Lesson_list @relation(fields: [lessonCode], references: [lesson_code])
 
-    Id Users @relation(fields: [teacherId], references: [user_id])
+  Id Users @relation(fields: [teacherId], references: [user_id])
+}
+
+model Assignment {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  fileUrl     String?
+  course      Int // = school_year
+  teacherId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  teacher Users @relation(fields: [teacherId], references: [user_id])
 }
 
 model Timetable {
-    id          Int         @id @default(autoincrement())
-    lesson_code String
-    teacher_id  String
-    weekdays    WeekDay
-    start_time  String
-    end_time    String
-    school_year Int
-    lesson      Lesson_list @relation(fields: [lesson_code], references: [lesson_code], onDelete: Cascade)
-    teacher     Users       @relation(fields: [teacher_id], references: [user_id], onDelete: Cascade)
+  id          Int         @id @default(autoincrement())
+  lesson_code String
+  teacher_id  String
+  weekdays    WeekDay
+  start_time  String
+  end_time    String
+  school_year Int
+  lesson      Lesson_list @relation(fields: [lesson_code], references: [lesson_code], onDelete: Cascade)
+  teacher     Users       @relation(fields: [teacher_id], references: [user_id], onDelete: Cascade)
 }
 
 enum WeekDay {
-    Даваа
-    Мягмар
-    Лхагва
-    Пүрэв
-    Баасан
+  Даваа
+  Мягмар
+  Лхагва
+  Пүрэв
+  Баасан
 }
 
 enum Semester {
-    Хавар
-    Намар
+  Хавар
+  Намар
 }
 
 enum TypesGP {
-    Gen
-    Pro
+  Gen
+  Pro
 }
 
 enum Role {
-    teacher
-    student
-    admin
+  teacher
+  student
+  admin
 }
 
 model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String?
-    access_token      String?
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String?
-    session_state     String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
-    identifier String
-    token      String
-    expires    DateTime
+  identifier String
+  token      String
+  expires    DateTime
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
 }
 
 // Optional for WebAuthn support
 model Authenticator {
-    credentialID         String  @unique
-    userId               String
-    providerAccountId    String
-    credentialPublicKey  String
-    counter              Int
-    credentialDeviceType String
-    credentialBackedUp   Boolean
-    transports           String?
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
 
-    user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@id([userId, credentialID])
+  @@id([userId, credentialID])
 }
