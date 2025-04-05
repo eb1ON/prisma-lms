@@ -28,6 +28,10 @@ model Users {
     Lesson_list Lesson_list[]
     Timetable   Timetable[]
     Lesson      Lesson[]
+    Post        Post[]
+    Reciever Chat[] @relation("RecievedMessages")
+    Sender   Chat[] @relation("SentMessages")
+
 }
 
 model Lesson_list {
@@ -45,6 +49,7 @@ model Lesson_list {
 
     Timetable Timetable[]
     Lesson    Lesson[]
+    Post        Post[]
 }
 
 model Lesson {
@@ -154,4 +159,24 @@ model Authenticator {
     user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@id([userId, credentialID])
+}
+model Post {
+    post_id     Int         @id @default(autoincrement())
+    teacher_id  String
+    teacher     Users       @relation(fields: [teacher_id], references: [user_id], onDelete: Cascade)
+    class_id    String?
+    lesson_code String
+    lesson      Lesson_list @relation(fields: [lesson_code], references: [lesson_code], onDelete: Cascade)
+    title       String?
+    body        String?
+    created_at  DateTime @default(now())
+}
+model Chat {
+    chat_id     Int         @id @default(autoincrement())
+    sender_id   String
+    sender      Users       @relation("SentMessages", fields: [sender_id], references: [user_id], onDelete: Cascade)
+    reciever_id String
+    reciever    Users       @relation("RecievedMessages", fields: [reciever_id], references: [user_id], onDelete: Cascade)
+    message     String
+    created_at  DateTime @default(now())
 }

@@ -43,7 +43,7 @@ export const NavItems = () => {
     },
     {
       name: "Харилцаа холбоо",
-      href: "/chat",
+      href: "/communicate",
       icon: <MessageSquare size={20} />,
       active: isNavItemActive(pathname, "/chat"),
       position: "top",

@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+const geistFallback = Geist_Mono({
+  variable: "--font-geist-fallback",
+  subsets: ["latin"],
+});
 
 const metadata: Metadata = {
   title: '"Монгол Коосэн" Технологийн Коллеж',
