@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 async function createLessonList() {
   try {
+    await prisma.roadmap.deleteMany();
     const newLessonList = await prisma.roadmap.createMany({
       data: [
         {

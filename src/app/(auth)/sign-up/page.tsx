@@ -46,6 +46,12 @@ const SignUpPage = async () => {
             <h2 className="text-base font-semibold mb-1">Хуваарь удирдлага</h2>
           </div>
         </Link>
+          {/* Хуваарь удирдлага */}
+          <Link href="/admin/roadmap">
+          <div className="bg-yellow-500 text-white py-5 px-4 rounded-lg shadow-md hover:bg-yellow-600 cursor-pointer transition-all text-center min-w-[160px]">
+            <h2 className="text-base font-semibold mb-1">Сургалтын агуулга</h2>
+          </div>
+        </Link>
       </div>
     </div>
   );
