@@ -67,27 +67,27 @@ const TimetablePage = () => {
   };
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#0f181e] text-white py-12 px-8">
+    <div className="fixed inset-0 overflow-y-auto bg-[#0f181e] text-[#e3fef3] py-12 px-8 font-sans">
       <div className="w-full max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8 gap-4">
           <Button
             variant="outline"
             onClick={() => router.back()}
-            className="border-[#24ffa5] text-black hover:bg-white"
+            className="text-[#0f181e] border-[#6be4b9] hover:bg-[#13272e] active:bg-[#6be4b9] active:text-[#0f181e]"
           >
             ← Буцах
           </Button>
-          <h1 className="text-4xl font-bold text-[#24ffa5] text-center w-full">
+          <h1 className="text-3xl font-bold text-white text-center w-full border-b border-[#6be4b9] pb-4 mb-6">
             🗓️ Хичээлийн хуваарь
           </h1>
           <div className="w-24" />
         </div>
 
         {/* Table */}
-        <div className="bg-[#13272e] divide-[#24ffa520] p-6 shadow-xl rounded-xl mb-12 w-full">
-          <table className="w-full border-collapse text-sm">
-            <thead className="text-[#24ffa5] border-b border-[#24ffa520]">
+        <div className="bg-[#13272e] p-6 shadow-xl rounded-xl mb-12 w-full max-h-[400px] overflow-y-auto">
+          <table className="w-full border-collapse text-sm divide-y divide-[#6be4b920]">
+            <thead className="bg-[#6be4b9] text-[#0f181e]">
               <tr>
                 <th className="px-4 py-3 text-left">Хичээл</th>
                 <th className="px-4 py-3 text-left">Багш</th>
@@ -99,8 +99,10 @@ const TimetablePage = () => {
             </thead>
             <tbody>
               {timetable.map((entry) => (
-                <tr key={entry.id} className="hover:bg-[#24ffa520] transition">
-                  <td className="px-4 py-3">{entry.lesson?.lesson_name}</td>
+                <tr key={entry.id} className="hover:bg-[#0f181e] transition">
+                  <td className="px-4 py-3 text-[#6be4b9] font-semibold">
+                    {entry.lesson?.lesson_name}
+                  </td>
                   <td className="px-4 py-3">{entry.teacher?.name}</td>
                   <td className="px-4 py-3">{entry.weekdays}</td>
                   <td className="px-4 py-3 text-center">{entry.start_time}</td>
@@ -108,7 +110,7 @@ const TimetablePage = () => {
                   <td className="px-4 py-3 text-center space-x-2">
                     <Button
                       size="sm"
-                      className="bg-[#24ffa5] hover:bg-[#1de194] text-black"
+                      className="bg-[#6be4b9] hover:bg-[#0f181e] active:bg-[#6be4b9] active:text-[#0f181e] text-[#0f181e] font-semibold"
                       onClick={() => setEditTimetable(entry)}
                     >
                       Засах
@@ -117,6 +119,7 @@ const TimetablePage = () => {
                       size="sm"
                       variant="destructive"
                       onClick={() => handleDeleteTimetable(entry.id)}
+                      className="active:bg-red-800 active:text-white"
                     >
                       Устгах
                     </Button>
@@ -129,12 +132,12 @@ const TimetablePage = () => {
 
         {/* Add Form */}
         <div className="bg-[#13272e] p-6 shadow-lg rounded-xl mb-12 w-full">
-          <h2 className="text-2xl font-semibold mb-4 text-[#24ffa5] text-center">
+          <h2 className="text-2xl font-bold text-[#6be4b9] text-center mb-6">
             ➕ Шинэ хичээл нэмэх
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <Input
-              className="w-full bg-[#0f181e] border-[#24ffa520] text-white"
+              className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
               value={newTimetable.lesson_code}
               onChange={(e) =>
                 setNewTimetable({
@@ -145,54 +148,40 @@ const TimetablePage = () => {
               placeholder="Хичээлийн код"
             />
             <Input
-              className="w-full bg-[#0f181e] border-[#24ffa520] text-white"
+              className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
               value={newTimetable.teacher_id}
               onChange={(e) =>
-                setNewTimetable({
-                  ...newTimetable,
-                  teacher_id: e.target.value,
-                })
+                setNewTimetable({ ...newTimetable, teacher_id: e.target.value })
               }
               placeholder="Багшийн ID"
             />
             <Input
-              className="w-full bg-[#0f181e] border-[#24ffa520] text-white"
+              className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
               value={newTimetable.weekdays}
               onChange={(e) =>
-                setNewTimetable({
-                  ...newTimetable,
-                  weekdays: e.target.value,
-                })
+                setNewTimetable({ ...newTimetable, weekdays: e.target.value })
               }
               placeholder="Өдөр (ж: Даваа)"
             />
             <Input
-              className="w-full bg-[#0f181e] border-[#24ffa520] text-white"
               type="time"
+              className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
               value={newTimetable.start_time}
               onChange={(e) =>
-                setNewTimetable({
-                  ...newTimetable,
-                  start_time: e.target.value,
-                })
+                setNewTimetable({ ...newTimetable, start_time: e.target.value })
               }
-              placeholder="Эхлэх цаг"
             />
             <Input
-              className="w-full bg-[#0f181e] border-[#24ffa520] text-white"
               type="time"
+              className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
               value={newTimetable.end_time}
               onChange={(e) =>
-                setNewTimetable({
-                  ...newTimetable,
-                  end_time: e.target.value,
-                })
+                setNewTimetable({ ...newTimetable, end_time: e.target.value })
               }
-              placeholder="Дуусах цаг"
             />
             <Input
-              className="w-full bg-[#0f181e] border-[#24ffa520] text-white"
               type="number"
+              className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
               value={newTimetable.school_year}
               onChange={(e) =>
                 setNewTimetable({
@@ -205,7 +194,7 @@ const TimetablePage = () => {
             <div className="md:col-span-2">
               <Button
                 onClick={handleAddTimetable}
-                className="w-full bg-[#24ffa5] hover:bg-[#1de194] text-black"
+                className="w-full bg-[#6be4b9] hover:bg-[#0f181e] active:bg-[#6be4b9] active:text-[#0f181e] text-[#0f181e] font-semibold"
               >
                 Хуваарь нэмэх
               </Button>
@@ -215,23 +204,23 @@ const TimetablePage = () => {
 
         {/* Edit Form */}
         {editTimetable && (
-          <div className="bg-[#13272e] fixed inset-0 z-50 m-auto max-w-screen-md backdrop-blur-md p-6 shadow-lg rounded-xl overflow-y-auto text-white">
-            <h2 className="text-2xl font-semibold mb-4 text-[#24ffa5] text-center">
+          <div className="bg-[#13272e] fixed inset-0 z-50 m-auto max-w-screen-md p-6 shadow-xl rounded-xl overflow-y-auto">
+            <h2 className="text-2xl font-bold mb-4 text-[#6be4b9] text-center">
               ✏️ Хуваарь засах
             </h2>
             <div className="grid md:grid-cols-2 gap-4">
               <Input
-                className="w-full bg-[#0f181e] text-white"
+                className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
                 value={editTimetable.lesson_code}
                 disabled
               />
               <Input
-                className="w-full bg-[#0f181e] text-white"
+                className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
                 value={editTimetable.teacher_id}
                 disabled
               />
               <Input
-                className="w-full bg-[#0f181e] border-[#24ffa520] text-white"
+                className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
                 value={editTimetable.weekdays}
                 onChange={(e) =>
                   setEditTimetable({
@@ -242,8 +231,8 @@ const TimetablePage = () => {
                 placeholder="Өдөр"
               />
               <Input
-                className="w-full bg-[#0f181e] border-[#24ffa520] text-white"
                 type="time"
+                className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
                 value={editTimetable.start_time}
                 onChange={(e) =>
                   setEditTimetable({
@@ -253,8 +242,8 @@ const TimetablePage = () => {
                 }
               />
               <Input
-                className="w-full bg-[#0f181e] border-[#24ffa520] text-white"
                 type="time"
+                className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
                 value={editTimetable.end_time}
                 onChange={(e) =>
                   setEditTimetable({
@@ -264,8 +253,8 @@ const TimetablePage = () => {
                 }
               />
               <Input
-                className="w-full bg-[#0f181e] border-[#24ffa520] text-white"
                 type="number"
+                className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
                 value={editTimetable.school_year}
                 onChange={(e) =>
                   setEditTimetable({
@@ -278,14 +267,14 @@ const TimetablePage = () => {
               <div className="md:col-span-2 flex gap-2">
                 <Button
                   onClick={handleEditTimetable}
-                  className="w-full bg-[#24ffa5] hover:bg-[#1de194] text-black"
+                  className="w-full bg-[#6be4b9] hover:bg-[#0f181e] active:bg-[#6be4b9] active:text-[#0f181e] text-[#0f181e] font-semibold"
                 >
                   Хадгалах
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setEditTimetable(null)}
-                  className="w-full border-[#24ffa5] text-[#24ffa5] hover:bg-[#0f181e]"
+                  className="w-full border-[#6be4b9] text-[#6be4b9] hover:bg-[#0f181e] active:bg-[#6be4b9] active:text-[#0f181e]"
                 >
                   Цуцлах
                 </Button>

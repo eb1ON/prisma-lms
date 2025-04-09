@@ -77,20 +77,20 @@ const UserManagementPage = () => {
           <Button
             variant="outline"
             onClick={() => router.back()}
-            className="border-[#24ffa5] text-black hover:bg-white"
+            className="text-[#0f181e] border-[#6be4b9] hover:bg-[#13272e] active:bg-[#6be4b9] active:text-[#0f181e]"
           >
             ← Буцах
           </Button>
-          <h1 className="text-4xl font-bold text-[#24ffa5] text-center w-full">
+          <h1 className="text-3xl font-bold text-white text-center w-full border-b border-[#6be4b9] pb-4 mb-6">
             👤 Хэрэглэгчийн удирдлага
           </h1>
           <div className="w-24" />
         </div>
 
-        {/* User Table */}
-        <div className="bg-[#13272e] divide-[#24ffa520] p-6 shadow-xl rounded-xl mb-12 w-full">
-          <table className="w-full border-collapse text-sm">
-            <thead className="text-[#24ffa5] border-b border-[#24ffa520]">
+        {/* User Table with scroll */}
+        <div className="bg-[#13272e] p-6 shadow-xl rounded-xl mb-12 w-full max-h-[400px] overflow-y-auto">
+          <table className="w-full border-collapse text-sm divide-y divide-[#6be4b920]">
+            <thead className="bg-[#6be4b9] text-[#0f181e]">
               <tr>
                 <th className="px-4 py-3 text-left">Код</th>
                 <th className="px-4 py-3 text-left">Нэр</th>
@@ -102,8 +102,10 @@ const UserManagementPage = () => {
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-[#24ffa520] transition">
-                  <td className="px-4 py-3">{user.user_id}</td>
+                <tr key={user.id} className="hover:bg-[#0f181e] transition">
+                  <td className="px-4 py-3 text-[#6be4b9] font-semibold">
+                    {user.user_id}
+                  </td>
                   <td className="px-4 py-3">{user.name}</td>
                   <td className="px-4 py-3">{user.email}</td>
                   <td className="px-4 py-3 capitalize">{user.role}</td>
@@ -112,7 +114,7 @@ const UserManagementPage = () => {
                     <Button
                       size="sm"
                       onClick={() => setEditUser(user)}
-                      className="bg-[#24ffa5] hover:bg-[#1de194] text-black"
+                      className="bg-[#6be4b9] hover:bg-[#0f181e] active:bg-[#6be4b9] active:text-[#0f181e] text-[#0f181e] font-semibold"
                     >
                       Засах
                     </Button>
@@ -120,6 +122,7 @@ const UserManagementPage = () => {
                       size="sm"
                       variant="destructive"
                       onClick={() => handleDeleteUser(user.id)}
+                      className="active:bg-red-800 active:text-white"
                     >
                       Устгах
                     </Button>
@@ -132,12 +135,12 @@ const UserManagementPage = () => {
 
         {/* Add User Form */}
         <div className="bg-[#13272e] p-6 shadow-lg rounded-xl mb-12 w-full">
-          <h2 className="text-2xl font-semibold mb-4 text-[#24ffa5] text-center">
+          <h2 className="text-2xl font-bold text-[#6be4b9] text-center mb-6">
             ➕ Шинэ хэрэглэгч нэмэх
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <Input
-              className="bg-[#0f181e] border-[#24ffa520] text-white"
+              className="bg-[#0f181e] text-white border border-[#6be4b920]"
               value={newUser.user_id}
               onChange={(e) =>
                 setNewUser({ ...newUser, user_id: e.target.value })
@@ -145,13 +148,13 @@ const UserManagementPage = () => {
               placeholder="Хэрэглэгчийн ID"
             />
             <Input
-              className="bg-[#0f181e] border-[#24ffa520] text-white"
+              className="bg-[#0f181e] text-white border border-[#6be4b920]"
               value={newUser.name}
               onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
               placeholder="Нэр"
             />
             <Input
-              className="bg-[#0f181e] border-[#24ffa520] text-white"
+              className="bg-[#0f181e] text-white border border-[#6be4b920]"
               value={newUser.email}
               onChange={(e) =>
                 setNewUser({ ...newUser, email: e.target.value })
@@ -159,24 +162,24 @@ const UserManagementPage = () => {
               placeholder="Имэйл"
             />
             <Input
-              className="bg-[#0f181e] border-[#24ffa520] text-white"
+              className="bg-[#0f181e] text-white border border-[#6be4b920]"
+              type="password"
               value={newUser.password}
               onChange={(e) =>
                 setNewUser({ ...newUser, password: e.target.value })
               }
-              type="password"
               placeholder="Нууц үг"
             />
             <Input
-              className="bg-[#0f181e] border-[#24ffa520] text-white"
+              className="bg-[#0f181e] text-white border border-[#6be4b920]"
               value={newUser.role}
               onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
               placeholder="Үүрэг (admin/teacher/student)"
             />
             <Input
-              className="bg-[#0f181e] border-[#24ffa520] text-white"
-              value={newUser.school_year}
+              className="bg-[#0f181e] text-white border border-[#6be4b920]"
               type="number"
+              value={newUser.school_year}
               onChange={(e) =>
                 setNewUser({
                   ...newUser,
@@ -188,7 +191,7 @@ const UserManagementPage = () => {
             <div className="md:col-span-2">
               <Button
                 onClick={handleAddUser}
-                className="w-full bg-[#24ffa5] hover:bg-[#1de194] text-black"
+                className="w-full bg-[#6be4b9] hover:bg-[#0f181e] active:bg-[#6be4b9] active:text-[#0f181e] text-[#0f181e] font-semibold"
               >
                 Нэмэх
               </Button>
@@ -199,17 +202,17 @@ const UserManagementPage = () => {
         {/* Edit User Form */}
         {editUser && (
           <div className="bg-[#13272e] fixed inset-0 z-50 m-auto max-w-screen-md backdrop-blur-md p-6 shadow-lg rounded-xl overflow-y-auto text-white">
-            <h2 className="text-2xl font-semibold mb-4 text-[#24ffa5] text-center">
+            <h2 className="text-2xl font-semibold mb-4 text-[#6be4b9] text-center">
               ✏️ Хэрэглэгч засах
             </h2>
             <div className="grid md:grid-cols-2 gap-4">
               <Input
-                className="bg-[#0f181e] text-white"
+                className="bg-[#0f181e] text-white border-[#6be4b920]"
                 value={editUser.user_id}
                 disabled
               />
               <Input
-                className="bg-[#0f181e] border-[#24ffa520] text-white"
+                className="bg-[#0f181e] text-white border border-[#6be4b920]"
                 value={editUser.name}
                 onChange={(e) =>
                   setEditUser({ ...editUser, name: e.target.value })
@@ -217,7 +220,7 @@ const UserManagementPage = () => {
                 placeholder="Нэр"
               />
               <Input
-                className="bg-[#0f181e] border-[#24ffa520] text-white"
+                className="bg-[#0f181e] text-white border border-[#6be4b920]"
                 value={editUser.email}
                 onChange={(e) =>
                   setEditUser({ ...editUser, email: e.target.value })
@@ -225,7 +228,7 @@ const UserManagementPage = () => {
                 placeholder="Имэйл"
               />
               <Input
-                className="bg-[#0f181e] border-[#24ffa520] text-white"
+                className="bg-[#0f181e] text-white border border-[#6be4b920]"
                 value={editUser.role}
                 onChange={(e) =>
                   setEditUser({ ...editUser, role: e.target.value })
@@ -233,7 +236,7 @@ const UserManagementPage = () => {
                 placeholder="Үүрэг"
               />
               <Input
-                className="bg-[#0f181e] border-[#24ffa520] text-white"
+                className="bg-[#0f181e] text-white border border-[#6be4b920]"
                 type="number"
                 value={editUser.school_year}
                 onChange={(e) =>
@@ -247,14 +250,14 @@ const UserManagementPage = () => {
               <div className="md:col-span-2 flex gap-2">
                 <Button
                   onClick={handleEditUser}
-                  className="w-full bg-[#24ffa5] hover:bg-[#1de194] text-black"
+                  className="w-full bg-[#6be4b9] hover:bg-[#0f181e] active:bg-[#6be4b9] active:text-[#0f181e] text-[#0f181e] font-semibold"
                 >
                   Хадгалах
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setEditUser(null)}
-                  className="w-full border-[#24ffa5] text-[#24ffa5] hover:bg-[#0f181e]"
+                  className="w-full border-[#6be4b9] text-[#6be4b9] hover:bg-[#0f181e] active:bg-[#6be4b9] active:text-[#0f181e]"
                 >
                   Цуцлах
                 </Button>

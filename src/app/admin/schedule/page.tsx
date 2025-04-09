@@ -1,3 +1,6 @@
+// This file contains the AdminSchedulePage component with updated styles
+// using the preferred color palette: bg-[#0f181e], bg-[#13272e], border-[#6be4b920], bg-[#6be4b9]
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -15,18 +18,18 @@ interface GroupedSchedule {
 }
 
 const monthNames = [
-  "Нэгдүгээр сар",
-  "Хоёрдугаар сар",
-  "Гуравдугаар сар",
-  "Дөрөвдүгээр сар",
-  "Тавдугаар сар",
-  "Зургаадугаар сар",
-  "Долоодугаар сар",
-  "Наймдугаар сар",
-  "Есдүгээр сар",
-  "Аравдугаар сар",
-  "Арваннэгдүгээр сар",
-  "Арванхоёрдугаар сар",
+  "1-р сар",
+  "2-р сар",
+  "3-р сар",
+  "4-р сар",
+  "5-р сар",
+  "6-р сар",
+  "7-р сар",
+  "8-р сар",
+  "9-р сар",
+  "10-р сар",
+  "11-р сар",
+  "12-р сар",
 ];
 
 const AdminSchedulePage = () => {
@@ -135,19 +138,19 @@ const AdminSchedulePage = () => {
         <div className="flex justify-between items-center mb-10 gap-4">
           <button
             onClick={() => router.back()}
-            className="bg-[#13272e] border border-[#24ffa520] px-4 py-2 rounded-md hover:bg-[#1b383f]"
+            className="bg-[#13272e] border border-[#6be4b920] px-4 py-2 rounded-md hover:bg-[#1b383f]"
           >
             ← Буцах
           </button>
-          <h1 className="text-4xl font-bold text-[#24ffa5] text-center w-full">
-            📅 Админ Хуваарь Удирдлага
+          <h1 className="text-3xl font-bold text-white text-center w-full border-b border-[#6be4b9] pb-4 mb-6">
+            📅 Админ хуваарь удирдлага
           </h1>
           <div className="w-24" />
         </div>
 
         {/* Add Schedule */}
         <div className="bg-[#13272e] p-6 shadow-xl rounded-xl mb-12 w-full">
-          <h2 className="text-2xl font-semibold text-[#24ffa5] text-center mb-4">
+          <h2 className="text-2xl font-semibold text-[#6be4b9] text-center mb-4">
             ➕ Хуваарь нэмэх
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
@@ -158,7 +161,7 @@ const AdminSchedulePage = () => {
               onChange={(e) =>
                 setNewSchedule({ ...newSchedule, event: e.target.value })
               }
-              className="w-full border border-[#24ffa520] rounded-md p-2 bg-[#0f181e] text-white"
+              className="w-full border border-[#6be4b920] rounded-md p-2 bg-[#0f181e] text-white"
             />
             <input
               type="date"
@@ -166,13 +169,13 @@ const AdminSchedulePage = () => {
               onChange={(e) =>
                 setNewSchedule({ ...newSchedule, date: e.target.value })
               }
-              className="w-full border border-[#24ffa520] rounded-md p-2 bg-[#0f181e] text-white"
+              className="w-full border border-[#6be4b920] rounded-md p-2 bg-[#0f181e] text-white"
             />
           </div>
           <button
             onClick={handleAdd}
             disabled={loading}
-            className="w-full mt-4 bg-[#24ffa5] hover:bg-[#1de194] text-black py-2 rounded-md font-semibold"
+            className="w-full mt-4 bg-[#6be4b9] hover:bg-[#53dab0] text-[#0f181e] py-2 rounded-md font-semibold"
           >
             {loading ? "Нэмж байна..." : "Хуваарь нэмэх"}
           </button>
@@ -191,7 +194,7 @@ const AdminSchedulePage = () => {
                 onChange={(e) =>
                   setEditSchedule({ ...editSchedule, event: e.target.value })
                 }
-                className="w-full border border-[#24ffa520] rounded-md p-2 bg-[#0f181e] text-white"
+                className="w-full border border-[#6be4b920] rounded-md p-2 bg-[#0f181e] text-white"
               />
               <input
                 type="date"
@@ -199,7 +202,7 @@ const AdminSchedulePage = () => {
                 onChange={(e) =>
                   setEditSchedule({ ...editSchedule, date: e.target.value })
                 }
-                className="w-full border border-[#24ffa520] rounded-md p-2 bg-[#0f181e] text-white"
+                className="w-full border border-[#6be4b920] rounded-md p-2 bg-[#0f181e] text-white"
               />
             </div>
             <div className="flex gap-4 mt-4">
@@ -211,7 +214,7 @@ const AdminSchedulePage = () => {
               </button>
               <button
                 onClick={() => setEditSchedule({ id: "", event: "", date: "" })}
-                className="w-full border border-[#24ffa520] text-white hover:bg-[#0f181e] rounded-md py-2"
+                className="w-full border border-[#6be4b920] text-white hover:bg-[#0f181e] rounded-md py-2"
               >
                 Цуцлах
               </button>
@@ -223,14 +226,14 @@ const AdminSchedulePage = () => {
         <div className="space-y-8">
           {schedules.map((group) => (
             <div key={group.month}>
-              <h2 className="text-2xl font-semibold text-[#24ffa5] mb-4 border-b border-[#24ffa520] pb-2">
+              <h2 className="text-2xl font-semibold text-white mb-4 border-b border-[#6be4b920] pb-2">
                 {monthNames[group.month - 1]}
               </h2>
-              <ul className="space-y-3">
+              <ul className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
                 {group.schedules.map((s) => (
                   <li
                     key={s.id}
-                    className="flex justify-between items-center bg-[#13272e] p-4 rounded-lg shadow-sm hover:shadow-md transition border border-[#24ffa520]"
+                    className="flex justify-between items-center bg-[#13272e] p-4 rounded-lg shadow-sm hover:shadow-md transition border border-[#6be4b920]"
                   >
                     <div>
                       <p className="font-medium text-white">{s.event}</p>
@@ -241,7 +244,7 @@ const AdminSchedulePage = () => {
                     <div className="flex gap-3">
                       <button
                         onClick={() => setEditSchedule(s)}
-                        className="bg-[#24ffa5] hover:bg-[#1de194] text-black px-3 py-1 rounded-md"
+                        className="bg-[#6be4b9] hover:bg-[#53dab0] text-[#0f181e] px-3 py-1 rounded-md"
                       >
                         Засах
                       </button>
