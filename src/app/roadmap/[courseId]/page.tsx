@@ -1,5 +1,4 @@
 import { prisma } from "../../../lib/prisma";
-import "./page.css"
 
 export default async function CoursePage({ params }: { params: { courseId: string } }) {
   const { courseId } = await params;
@@ -19,7 +18,7 @@ export default async function CoursePage({ params }: { params: { courseId: strin
 
   if (!roadmapData || roadmapData.length === 0) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-[#1c1f23]">
         <h1 className="text-3xl font-bold text-red-500">Roadmap олоогүй байна! </h1>
       </div>
     );
@@ -35,33 +34,33 @@ export default async function CoursePage({ params }: { params: { courseId: strin
   }, {} as { [key: string]: typeof roadmapData });
 
   return (
-    <div className="container mx-auto p-6">
-     <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
-  {courseId}-р курсийн сургалтын агуулга
-</h1>
+    <div className="min-h-screen bg-[#1c1f23] px-4 py-16 flex flex-col items-center">
+      <h1 className="text-3xl font-extrabold text-center bg-gradient-to-r from-[#65d8ba] to-[#65d8ba] text-[#293536] py-4 px-8 w-full rounded-xl shadow-lg mb-8">
+        {courseId}-р курсийн сургалтын агуулга
+      </h1>
 
-
-
-      <div className="space-y-8">
+      <div className="space-y-8 bg-[#1c1f23]">
         {Object.entries(groupedBySemester).map(([semester, items], index) => (
-          <div key={index} className="border p-4 rounded-lg bg-gray-100">
-          <h2
-  className="semester-header mb-4"
-  style={{
-    backgroundImage:
-      semester === "Хавар"
-        ? "url('/images/havar.png')"
-        : semester === "Намар"
-        ? "url('/images/namar.jpg')"
-        : "none",
-  }}
->
-  <span className="text-shadow">
-    {semester === "Хавар" ? "🌸 Хаврын улиралд" : semester === "Намар" ? "🍂 Намрын улиралд" : "📚 Unknown Semester"}
-  </span>
-</h2>
-
-
+          <div key={index} className="border p-4 rounded-lg bg-[#1c1f23]">
+            <h2
+              className="semester-header mb-4 text-2xl font-bold text-center py-4"
+              style={{
+                backgroundColor:
+                  semester === "Намар"
+                    ? "#65d8ba" // Намрын улиралд алтлаг өнгө
+                    : semester === "Хавар"
+                    ? "#65d8ba" // Хаврын улиралд ногоон өнгө
+                    : "#2e3d3e", // Мэдээлэл байхгүй үед илүү харанхуй өнгө
+              }}
+            >
+              <span className="text-shadow">
+                {semester === "Хавар"
+                  ? " Хаврын улиралд"
+                  : semester === "Намар"
+                  ? " Намрын улиралд"
+                  : "📚 Unknown Semester"}
+              </span>
+            </h2>
 
             <div className="space-y-4">
               {["Pro", "Gen"].map((type, idx) => {
@@ -71,23 +70,22 @@ export default async function CoursePage({ params }: { params: { courseId: strin
                   return (
                     <details
                       key={idx}
-                      className="border rounded-lg bg-gray-200 open:shadow-md transition-all duration-300"
+                      className=" rounded-lg bg-[#1c1f23] open:shadow-md transition-all duration-300"
                     >
-                      <summary className="cursor-pointer font-semibold text-xl p-4 select-none">
+                      <summary className="cursor-pointer font-semibold text-xl p-4 select-none text-gray-300 hover:text-[#65d8ba]">
                         {type === "Pro"
                           ? "Мэргэжлийн хичээлүүд"
                           : "Ерөнхий эрдэмийн хичээлүүд"}
                       </summary>
 
                       <div className="grid grid-cols-2 gap-4 p-4">
-  {filteredItems.map((roadmap, idx) => (
-    <div key={idx} className="lesson-card">
-      <h4>{roadmap.lesson_name}</h4>
-      <p>Кредит: {roadmap.credits}</p>
-    </div>
-  ))}
-</div>
-
+                        {filteredItems.map((roadmap, idx) => (
+                          <div key={idx} className="lesson-card p-4 boder-[#6be4b9] shadow-md shadow-[#6be4b9] rounded-lg bg-[#1c1f23]">
+                            <h4 className="text-lg font-bold text-[#65d8ba]">{roadmap.lesson_name}</h4>
+                            <p className="text-sm text-[#a8a8a8]">Кредит: {roadmap.credits}</p>
+                          </div>
+                        ))}
+                      </div>
                     </details>
                   );
                 }

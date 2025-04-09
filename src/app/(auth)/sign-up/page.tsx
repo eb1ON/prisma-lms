@@ -26,24 +26,41 @@ const AdminHomePage = async () => {
             <AdminCard href="/admin/users" label="Хэрэглэгчийн удирдлага" />
             <AdminCard href="/admin/schedule" label="Хуанли удирдлага" />
           </div>
-          <SignOut />
-        </div>
-      </body>
-    </html>
+        </Link>
+
+        {/* Хичээлийн хуваарь удирдлага */}
+        <Link href="/admin/timetable">
+          <div className="bg-red-500 text-white py-5 px-4 rounded-lg shadow-md hover:bg-red-600 cursor-pointer transition-all text-center min-w-[160px]">
+            <h2 className="text-base font-semibold mb-1">
+              Хичээлийн хуваарь удирдлага
+            </h2>
+          </div>
+        </Link>
+
+        {/* Хэрэглэгчийн удирдлага */}
+        <Link href="/admin/users">
+          <div className="bg-green-500 text-white py-5 px-4 rounded-lg shadow-md hover:bg-green-600 cursor-pointer transition-all text-center min-w-[160px]">
+            <h2 className="text-base font-semibold mb-1">
+              Хэрэглэгчийн удирдлага
+            </h2>
+          </div>
+        </Link>
+
+        {/* Хуваарь удирдлага */}
+        <Link href="/admin/schedule">
+          <div className="bg-yellow-500 text-white py-5 px-4 rounded-lg shadow-md hover:bg-yellow-600 cursor-pointer transition-all text-center min-w-[160px]">
+            <h2 className="text-base font-semibold mb-1">Хуваарь удирдлага</h2>
+          </div>
+        </Link>
+          {/* Хуваарь удирдлага */}
+          <Link href="/admin/roadmap">
+          <div className="bg-yellow-500 text-white py-5 px-4 rounded-lg shadow-md hover:bg-yellow-600 cursor-pointer transition-all text-center min-w-[160px]">
+            <h2 className="text-base font-semibold mb-1">Сургалтын агуулга</h2>
+          </div>
+        </Link>
+      </div>
+    </div>
   );
 };
-
-type AdminCardProps = {
-  href: string;
-  label: string;
-};
-
-const AdminCard = ({ href, label }: AdminCardProps) => (
-  <Link href={href}>
-    <div className="bg-[#0f181e] border border-[#2a4c56] text-[#d6faff] py-3 px-4 rounded-lg text-center hover:border-[#24ffa5] hover:bg-[#13272e] hover:shadow-md transition-all duration-300 cursor-pointer">
-      <span className="text-base font-medium">{label}</span>
-    </div>
-  </Link>
-);
 
 export default AdminHomePage;
