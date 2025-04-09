@@ -26,20 +26,18 @@ type LayoutProps = {
 };
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <div className="flex bg-white">
-          <SideNav />
-          <div className="w-full overflow-x-auto">
-            <div className="flex-grow overflow-y-auto h-screen">
-              <div className="w-full flex justify-center mx-auto">
-                <div className="w-full md:max-w-6xl">{children}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </body>
-    </html>
+    <html lang="mn">
+    <body
+      className={`flex flex-row min-h-screen w-screen overflow-x-hidden ${geistSans.variable} ${geistMono.variable}`}
+    >
+      <div className="flex bg-[#1e2627]">
+        <SideNav />
+      </div>
+      <main className="flex-grow bg-[#1e2627] p-0">
+        <div className="max-w-6xl mx-auto">{children}</div>
+      </main>
+    </body>
+  </html>
   );
 };
 

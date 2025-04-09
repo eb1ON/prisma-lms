@@ -16,16 +16,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing data" }, { status: 400 });
     }
  
-    const newMessage = await prisma.create({
+    const newMessage = await prisma.chat.create({
       data: {
         sender_id: senderId,
         reciever_id: receiverId,
         message,
       },
     });
- 
-    console.log("Message successfully saved:", newMessage);
-    return NextResponse.json(newMessage, { status: 201 });
+
+    
+    return NextResponse.redirect(new URL("/communicate/[user]", req.url));
   } catch (error) {
     console.error("POST: Error saving message:", error);
     return NextResponse.json({ error: "Error saving message" }, { status: 500 });

@@ -47,7 +47,7 @@ export default function SideNav() {
       <div
         className={cn(
           isSidebarExpanded ? "w-[200px]" : "w-[68px]",
-          "border-r transition-all duration-300 ease-in-out transform hidden sm:flex h-full bg-accent"
+          "border-r border-[#6be4b9] transition-all duration-300 ease-in-out transform hidden sm:flex h-full bg-[#313f40]"
         )}
       >
         <aside className="flex h-full flex-col w-full break-words px-4 overflow-x-hidden columns-1">
@@ -127,8 +127,8 @@ export const SideNavItem: React.FC<{
           href={path}
           className={`h-full relative flex items-center whitespace-nowrap rounded-md ${
             active
-              ? "font-base text-sm bg-neutral-200 shadow-sm text-neutral-700 dark:bg-neutral-800 dark:text-white"
-              : "hover:bg-neutral-200 hover:text-neutral-700 text-neutral-500 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
+              ? "font-base text-sm bg-[#6be4b9] shadow-sm text-neutral-700 dark:bg-neutral-800 dark:text-white"
+              : "hover:bg-[#6be4b9] hover:text-neutral-700 text-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
           }`}
         >
           <div className="relative font-base text-sm py-1.5 px-2 flex flex-row items-center space-x-2 rounded-md duration-100">
@@ -144,8 +144,8 @@ export const SideNavItem: React.FC<{
                 href={path}
                 className={`h-full relative flex items-center whitespace-nowrap rounded-md ${
                   active
-                    ? "font-base text-sm bg-neutral-200 text-neutral-700 dark:bg-neutral-800 dark:text-white"
-                    : "hover:bg-neutral-200 hover:text-neutral-700 text-neutral-500 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
+                    ? "font-base text-sm bg-[#6be4b9] text-neutral-700 dark:bg-neutral-800 dark:text-white"
+                    : "hover:bg-[#6be4b9] hover:text-neutral-700 text-neutral-500 dark:text-neutral-400 dark:hover:bg-[#6be4b9] dark:hover:text-white"
                 }`}
               >
                 <div className="relative font-base text-sm p-2 flex flex-row items-center space-x-2 rounded-md duration-100">
