@@ -27,6 +27,9 @@ model Users {
     Lesson_list Lesson_list[]
     Timetable   Timetable[]
     Lesson      Lesson[]
+    sentPosts   Post[]        @relation("TeacherRelation")
+    Reciever    Chat[]        @relation("RecievedMessages")
+    Sender      Chat[]        @relation("SentMessages")
 }
 
 model Roadmap {
@@ -83,6 +86,26 @@ model Timetable {
     school_year Int // Талбарыг зөв тодорхойлж байна
     lesson      Lesson_list @relation(fields: [lesson_code], references: [lesson_code], onDelete: Cascade)
     teacher     Users       @relation(fields: [teacher_id], references: [user_id], onDelete: Cascade)
+}
+
+model Post {
+    post_id     Int      @id @default(autoincrement())
+    teacher_id  String
+    teacher     Users    @relation("TeacherRelation", fields: [teacher_id], references: [user_id], onDelete: Cascade)
+    title       String?
+    body        String?
+    created_at  DateTime @default(now())
+    school_year Int?
+}
+
+model Chat {
+    chat_id     Int      @id @default(autoincrement())
+    sender_id   String
+    sender      Users    @relation("SentMessages", fields: [sender_id], references: [user_id], onDelete: Cascade)
+    reciever_id String
+    reciever    Users    @relation("RecievedMessages", fields: [reciever_id], references: [user_id], onDelete: Cascade)
+    message     String
+    created_at  DateTime @default(now())
 }
 
 model Schedule {

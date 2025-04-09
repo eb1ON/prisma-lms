@@ -23,9 +23,9 @@ export async function POST(req: NextRequest) {
         message,
       },
     });
- 
-    console.log("Message successfully saved:", newMessage);
-    return NextResponse.json(newMessage, { status: 201 });
+
+    
+    return NextResponse.redirect(new URL("/communicate/[user]", req.url));
   } catch (error) {
     console.error("POST: Error saving message:", error);
     return NextResponse.json({ error: "Error saving message" }, { status: 500 });
