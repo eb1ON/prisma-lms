@@ -1,9 +1,8 @@
+import Image from "next/image"; // ✅ Next Image нэмэх
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { auth, signIn } from "@/lib/auth";
 import { executeAction } from "@/lib/executeAction";
-import Link from "next/link";
-import db from "@/lib/db";
 import { redirect } from "next/navigation";
 
 const Page = async () => {
@@ -16,10 +15,12 @@ const Page = async () => {
     <body className="min-h-screen w-full relative bg-[#0f181e] text-[#d6faff] overflow-hidden flex items-center justify-center px-4">
       {/* ✅ Background Image with slight visibility */}
       <div className="absolute inset-0 z-0">
-        <img
+        <Image
           src="https://mk.edu.mn/wp-content/uploads/2025/01/f.png"
           alt="Login Background"
-          className="w-full h-full object-cover opacity-50"
+          fill
+          className="object-cover opacity-50"
+          priority
         />
         <div className="absolute inset-0 bg-[#0f181e] bg-opacity-50" />
       </div>
@@ -29,10 +30,12 @@ const Page = async () => {
         {/* ✅ LOGO */}
         <div className="flex justify-center">
           <div className="w-24 h-24 rounded-full bg-[#0f181e] flex items-center justify-center border border-[#24ffa5] shadow-inner shadow-[#24ffa520] hover:scale-105 transition-transform duration-300">
-            <img
+            <Image
               src="/images/moko.png"
               alt="Монгол Коосэн лого"
-              className="w-16 h-auto object-contain drop-shadow-sm transition duration-300"
+              width={64}
+              height={64}
+              className="object-contain drop-shadow-sm transition duration-300"
             />
           </div>
         </div>

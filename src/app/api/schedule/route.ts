@@ -8,7 +8,7 @@ type GroupedSchedule = {
   schedules: Schedule[];
 };
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const allSchedules = await db.schedule.findMany({
       orderBy: { date: "asc" },

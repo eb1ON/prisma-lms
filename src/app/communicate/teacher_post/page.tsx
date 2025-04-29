@@ -1,22 +1,31 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import Link from "next/link";
 
-export default async function PostPage({ searchParams }: { searchParams: { year?: string } }) {
+export default async function PostPage() {
   const session = await auth();
-  if (!session || !session.user) redirect("/auth/sign-in");
+  if (!session || !session.user) redirect("/sign-in");
 
   const email = session.user.email!;
   const currentUser = await prisma.users.findUnique({ where: { email } });
-  if (!currentUser) redirect("/auth/sign-in");
+  if (!currentUser) redirect("/sign-in");
+
+  const headersList = await headers(); // ✅ `await` нэмсэн
+  const rawUrl = headersList.get("x-url") || "";
+  const url = new URL(rawUrl, "http://localhost");
+  const selectedYear = parseInt(url.searchParams.get("year") ?? "0");
 
   const schoolYears = [1, 2, 3, 4, 5];
-  const selectedYear = parseInt(searchParams.year ?? "0");
 
   const posts =
     selectedYear > 0
       ? await prisma.post.findMany({
-          where: { school_year: selectedYear, teacher_id: currentUser.user_id },
+          where: {
+            school_year: selectedYear,
+            teacher_id: currentUser.user_id,
+          },
           orderBy: { created_at: "asc" },
         })
       : [];
@@ -25,31 +34,39 @@ export default async function PostPage({ searchParams }: { searchParams: { year?
     currentUser.role === "teacher"
       ? "/communicate/teacher_post"
       : "/communicate/student_post";
-
   return (
     <div className="flex flex-col mt-3 mb-3 w-full h-screen bg-[#1e2627] overflow-y-hidden">
       {/* Navigation */}
       <div className="flex w-full bg-[#313f40] shadow-sm shadow-[#6be4b9] mb-1 rounded-sm">
-        <button className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black">
-          <a href={selectedButton}>Нийтлэл</a>
-        </button>
-        <button className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black">
-          <a href="/communicate/1">Мессеж</a>
-        </button>
+        <Link
+          href={selectedButton}
+          className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black flex items-center justify-center"
+        >
+          Нийтлэл
+        </Link>
+        <Link
+          href="/communicate/1"
+          className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black flex items-center justify-center"
+        >
+          Мессеж
+        </Link>
       </div>
 
       {/* User Info */}
       <div className="flex justify-start space-x-3 items-center px-8 mb-4 mt-4">
         <img
-            src="https://png.pngtree.com/png-vector/20220210/ourmid/pngtree-avatar-bussinesman-man-profile-icon-vector-illustration-png-image_4384273.png"
-            alt="User Profile"
-            className="w-10 h-10 rounded-full border border-purple-500 shadow-md"
-          />
+          src="https://png.pngtree.com/png-vector/20220210/ourmid/pngtree-avatar-bussinesman-man-profile-icon-vector-illustration-png-image_4384273.png"
+          alt="User Profile"
+          className="w-10 h-10 rounded-full border border-purple-500 shadow-md"
+        />
         <div>
-          <h1 className="text-xl font-semibold text-[#6be4b9]">{currentUser.name}</h1>
-          <p className="text-sm text-gray-300">{currentUser.role === "teacher" ? "Багш" : "Оюутан"}</p>
+          <h1 className="text-xl font-semibold text-[#6be4b9]">
+            {currentUser.name}
+          </h1>
+          <p className="text-sm text-gray-300">
+            {currentUser.role === "teacher" ? "Багш" : "Оюутан"}
+          </p>
         </div>
-        
       </div>
 
       {/* Main Content */}
@@ -59,7 +76,7 @@ export default async function PostPage({ searchParams }: { searchParams: { year?
           <ul className="space-y-2">
             {schoolYears.map((year) => (
               <li key={year}>
-                <a
+                <Link
                   href={`/communicate/teacher_post?year=${year}`}
                   className={`text-lg p-3 rounded flex justify-center font-medium ${
                     selectedYear === year
@@ -68,7 +85,7 @@ export default async function PostPage({ searchParams }: { searchParams: { year?
                   }`}
                 >
                   МКТК {year}-5 анги
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -81,12 +98,19 @@ export default async function PostPage({ searchParams }: { searchParams: { year?
             {selectedYear > 0 && (
               <>
                 {posts.length === 0 ? (
-                  <p className="text-gray-400 ">Одоогоор пост алга байна.</p>
+                  <p className="text-gray-400">Одоогоор пост алга байна.</p>
                 ) : (
                   posts.map((post, index) => (
-                    <div key={index} className="mb-4 flex flex-col justify-center ml-56 items-center w-2/4 p-4 shadow-[#6be4b9] bg-[#313f40] rounded-md shadow-md">
-                      <h3 className="text-lg font-semibold text-white">Нийтлэлийн гарчиг: {post.title}</h3>
-                      <p className="text-gray-300">Нийтлэлийн агуулга: {post.body}</p>
+                    <div
+                      key={index}
+                      className="mb-4 flex flex-col justify-center ml-56 items-center w-2/4 p-4 shadow-[#6be4b9] bg-[#313f40] rounded-md shadow-md"
+                    >
+                      <h3 className="text-lg font-semibold text-white">
+                        Нийтлэлийн гарчиг: {post.title}
+                      </h3>
+                      <p className="text-gray-300">
+                        Нийтлэлийн агуулга: {post.body}
+                      </p>
                     </div>
                   ))
                 )}
@@ -94,13 +118,13 @@ export default async function PostPage({ searchParams }: { searchParams: { year?
             )}
           </div>
 
-          {/* Form - always visible */}
+          {/* Form */}
           {selectedYear > 0 && (
             <form
               id="post-form"
               className="sticky bottom-0 mt-3 space-y-3 p-1 rounded-md"
             >
-              <div className="flex flex-row ">
+              <div className="flex flex-row">
                 <input type="hidden" name="school_year" value={selectedYear} />
                 <input
                   type="text"
@@ -115,40 +139,39 @@ export default async function PostPage({ searchParams }: { searchParams: { year?
                   className="w-7/12 h-10 p-2 mr-3 rounded border border-[#6be4b9] bg-[#1e2627] text-white"
                   required
                 />
-                  <button
+                <button
                   type="submit"
                   className="px-1 w-1/12 p-2 h-10 py-2 bg-[#6be4b9] text-[#1e2627] font-semibold rounded"
                 >
                   Нийтлэх
                 </button>
               </div>
-              
             </form>
           )}
         </div>
       </div>
 
-      {/* Client-side form handler */}
+      {/* Client-side script */}
       <script
         dangerouslySetInnerHTML={{
           __html: `
-            document.addEventListener("DOMContentLoaded", function () {
-              const form = document.getElementById("post-form");
-              if (!form) return;
+                document.addEventListener("DOMContentLoaded", function () {
+                    const form = document.getElementById("post-form");
+                    if (!form) return;
 
-              form.addEventListener("submit", function (e) {
-                e.preventDefault();
-                const formData = new FormData(form);
-                fetch("/api/post", {
-                  method: "POST",
-                  body: formData
-                }).then(() => {
-                  form.reset();               // 🧼 Input-уудыг цэвэрлэнэ
-                  window.location.reload();   // 🔁 Хуудсыг дахин ачаална
+                    form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+                    fetch("/api/post", {
+                        method: "POST",
+                        body: formData
+                    }).then(() => {
+                        form.reset();
+                        window.location.reload();
+                    });
+                    });
                 });
-              });
-            });
-          `,
+                `,
         }}
       />
     </div>

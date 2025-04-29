@@ -28,7 +28,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex bg-white">
+        <div className="flex bg-[#283131]">
           <SideNav />
           <div className="w-full overflow-x-auto">
             <div className="flex-grow overflow-y-auto h-screen">

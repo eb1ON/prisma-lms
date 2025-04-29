@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import db from "@/lib/db"; // Prisma client
 
 // GET: Хичээлийн жагсаалтыг авах
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const lessons = await db.lesson_list.findMany({
       include: {

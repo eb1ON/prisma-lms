@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import { auth } from "@/lib/auth";
 import { PrismaClient } from "@prisma/client";
 import Link from "next/link";
@@ -35,9 +36,16 @@ const LessonView = async ({ params }: { params: { lessonId: string } }) => {
 
   return (
     <div className="p-8 min-h-screen w-full space-y-6 bg-[#283131]">
-      <h1 className="text-3xl font-bold text-center bg-gradient-to-r from-[#3ef4cb] to-[#2dc2bd] shadow-md text-[#293536] py-4 rounded-xl shadow-sm">
-        Хичээлүүд
-      </h1>
+      <div className="relative flex items-center justify-center">
+        <div className="absolute left-0">
+          <BackButton />
+        </div>
+
+        <div className="text-center">
+          <h1 className="text-4xl font-bold tracking-wide">Хичээлүүд</h1>
+          <div className="w-50 mx-auto mt-4 border-t-2 border-[#65d8ba]"></div>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
         {lessonsToShow.length > 0 ? (
@@ -77,7 +85,7 @@ const LessonView = async ({ params }: { params: { lessonId: string } }) => {
           ))
         ) : (
           <p className="text-center text-gray-400 col-span-full">
-            No lessons found.
+            Хичээл олдоогүй.
           </p>
         )}
       </div>

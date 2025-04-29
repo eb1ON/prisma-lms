@@ -3,29 +3,31 @@ import Credentials from "next-auth/providers/credentials";
 import db from "./db";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { schema } from "./schema";
-import { v4 as uuid } from "uuid";
-import { encode } from "next-auth/jwt";
-const adapter = PrismaAdapter(db);
+
 export const { auth, handlers, signIn } = NextAuth({
-  adapter,
+  adapter: PrismaAdapter(db),
+  session: {
+    strategy: "jwt", // JWT ашиглана
+  },
   providers: [
     Credentials({
       credentials: {
         email: {},
         password: {},
       },
-      authorize: async (credentials) => {
-        const validatedCredentials = schema.parse(credentials);
+      async authorize(credentials) {
+        const validated = schema.parse(credentials);
+
         const user = await db.users.findFirst({
           where: {
-            email: validatedCredentials.email,
-            password: validatedCredentials.password,
+            email: validated.email,
+            password: validated.password, // Хаш хийж байгаа бол bcrypt.compare ашиглана
           },
           select: {
             id: true,
             user_id: true,
             name: true,
-            role: true, // Directly include role here
+            role: true,
             school_year: true,
             email: true,
             createdAt: true,
@@ -33,44 +35,33 @@ export const { auth, handlers, signIn } = NextAuth({
           },
         });
 
-        if (!user) {
-          throw new Error("Invalid credentials.");
-        }
-
+        if (!user) throw new Error("Нэвтрэх мэдээлэл буруу байна");
         return user;
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, account }) {
-      if (account?.provider === "credentials") {
-        token.credentials = true;
+    async jwt({ token, user, account }) {
+      // Login үед хэрэглэгчийн мэдээллийг токен руу дамжуулна
+      if (account?.provider === "credentials" && user) {
+        token.user_id = user.user_id;
+        token.role = user.role;
+        token.school_year = user.school_year;
       }
       return token;
     },
-  },
-  jwt: {
-    encode: async function (params) {
-      if (params.token?.credentials) {
-        const sessionToken = uuid();
-
-        if (!params.token.sub) {
-          throw new Error("No user ID found in token");
-        }
-
-        const createdSession = await adapter?.createSession?.({
-          sessionToken: sessionToken,
-          userId: params.token.sub,
-          expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        });
-
-        if (!createdSession) {
-          throw new Error("Failed to create session");
-        }
-
-        return sessionToken;
-      }
-      return encode(params);
+    async session({ session, token }) {
+      // Токенээс session-д дамжуулах
+      session.user.user_id = token.user_id as string;
+      session.user.role = token.role as string;
+      session.user.school_year = token.school_year as number;
+      return session;
     },
+    async redirect({ url, baseUrl }) {
+      return baseUrl; // Login хийсний дараа '/' руу шилжүүлнэ
+    },
+  },
+  pages: {
+    signIn: "/sign-in", // Custom login page
   },
 });

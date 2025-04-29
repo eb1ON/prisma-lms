@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+// src/app/layout.tsx
+import "./globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
-import "@/app/globals.css";
-import { ReactNode } from "react";
+import type { Metadata } from "next";
+import SessionWrapper from "@/components/SessionWrapper"; // 👈
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,29 +14,31 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const metadata: Metadata = {
+export const metadata: Metadata = {
   title: '"Монгол Коосэн" Технологийн Коллеж',
   description: "lms",
 };
 
-type LayoutProps = {
-  children: ReactNode;
-};
-const Layout = ({ children }: LayoutProps) => {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
+    <html lang="mn">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <main className="flex items-center justify-center bg-white">
-          <div className="bg-white p-8 rounded-lg w-full max-w-md">
-            {children}
-          </div>
-        </main>
+        <SessionWrapper>
+          {" "}
+          {/* ✅ client талаас SessionProvider-оор бүрхэнэ */}
+          <main className="flex items-center justify-center bg-white min-h-screen">
+            <div className="bg-white p-8 rounded-lg w-full max-w-4xl">
+              {children}
+            </div>
+          </main>
+        </SessionWrapper>
       </body>
     </html>
   );
-};
-
-export { metadata };
-export default Layout;
+}

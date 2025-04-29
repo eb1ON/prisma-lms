@@ -14,7 +14,7 @@ const SignOut = () => {
         variant="destructive"
         onClick={handleSignOut}
       >
-        Sign Out
+        Гарах
       </Button>
     </div>
   );

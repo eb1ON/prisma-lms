@@ -1,3 +1,4 @@
+import BackButton from "@/components/BackButton";
 import { auth } from "@/lib/auth";
 import { PrismaClient } from "@prisma/client";
 import { notFound } from "next/navigation";
@@ -10,6 +11,7 @@ const LessonDetailView = async ({
   params: { lessonView: string };
 }) => {
   const { lessonView } = await params;
+  const session = await auth();
   const parsedLessonId = parseInt(lessonView, 10);
   const lesson = await prisma.lesson.findUnique({
     where: { id: parsedLessonId },
@@ -19,11 +21,17 @@ const LessonDetailView = async ({
 
   return (
     <div className="p-6 md:p-10 min-h-screen bg-[#283131] text-white">
-      <div className="max-w-4xl mx-auto space-y-6 bg-[#313f40] border border-[#3ef4cb] rounded-2xl p-8 shadow-xl">
-        <h1 className="text-2xl md:text-3xl font-bold text-[#3ef4cb] text-center">
-          {lesson.title}
-        </h1>
+      <div className="relative flex items-center justify-center">
+        <div className="absolute left-0">
+          <BackButton />
+        </div>
 
+        <div className="text-center">
+          <h1 className="text-4xl font-bold tracking-wide">{lesson.title}</h1>
+          <div className="w-50 mx-auto mt-4 border-t-2 border-[#65d8ba]"></div>
+        </div>
+      </div>
+      <div className="mt-10 max-w-4xl mx-auto space-y-6 bg-[#313f40] border border-[#3ef4cb] rounded-2xl p-8 shadow-xl">
         {lesson.description && (
           <p className="text-gray-300 text-center">{lesson.description}</p>
         )}

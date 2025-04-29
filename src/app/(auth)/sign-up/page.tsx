@@ -25,6 +25,7 @@ const AdminHomePage = async () => {
             />
             <AdminCard href="/admin/users" label="Хэрэглэгчийн удирдлага" />
             <AdminCard href="/admin/schedule" label="Хуанли удирдлага" />
+            <AdminCard href="/admin/roadmap" label="Сургалтын агуулга" />
           </div>
         </Link>
 

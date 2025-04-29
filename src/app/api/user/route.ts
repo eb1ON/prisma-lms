@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import db from "@/lib/db"; // Prisma client
 
 // GET: Бүх хэрэглэгчийн мэдээллийг авах
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const users = await db.users.findMany();
     return NextResponse.json(users);

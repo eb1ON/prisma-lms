@@ -8,67 +8,89 @@ import { Input } from "@/components/ui/input";
 const LessonsPage = () => {
   const router = useRouter();
   const [lessons, setLessons] = useState<any[]>([]);
+  const [filteredLessons, setFilteredLessons] = useState<any[]>([]);
   const [newLesson, setNewLesson] = useState({
     lesson_code: "",
     lesson_name: "",
-    credits: 0,
+    credits: 1,
     description: "",
     teacher_id: "",
   });
   const [editLesson, setEditLesson] = useState<any | null>(null);
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchLessons = async () => {
       const res = await fetch("/api/lessons");
       const data = await res.json();
       setLessons(data);
+      setFilteredLessons(data);
     };
     fetchLessons();
   }, []);
 
+  useEffect(() => {
+    const term = searchTerm.toLowerCase();
+    const filtered = lessons.filter(
+      (lesson) =>
+        lesson.lesson_name.toLowerCase().includes(term) ||
+        lesson.lesson_code.toLowerCase().includes(term)
+    );
+    setFilteredLessons(filtered);
+  }, [searchTerm, lessons]);
+
   const handleAddLesson = async () => {
+    if (!newLesson.lesson_code || !newLesson.lesson_name) {
+      alert("Бүх заавал талбарыг бөглөнө үү!");
+      return;
+    }
+    const payload = {
+      ...newLesson,
+      teacher_id:
+        newLesson.teacher_id.trim() === "" ? null : newLesson.teacher_id,
+    };
     const res = await fetch("/api/lessons", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newLesson),
+      body: JSON.stringify(payload),
     });
-
     const data = await res.json();
-    setLessons((prevLessons) => [...prevLessons, data]);
+    setLessons((prev) => [...prev, data]);
     setNewLesson({
       lesson_code: "",
       lesson_name: "",
-      credits: 0,
+      credits: 1,
       description: "",
       teacher_id: "",
     });
+    setIsAddOpen(false);
   };
 
   const handleEditLesson = async () => {
+    if (!editLesson.lesson_code || !editLesson.lesson_name) {
+      alert("Бүх заавал талбарыг бөглөнө үү!");
+      return;
+    }
+    const payload = {
+      ...editLesson,
+      teacher_id:
+        editLesson.teacher_id?.trim() === "" ? null : editLesson.teacher_id,
+    };
     const res = await fetch("/api/lessons", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(editLesson),
+      body: JSON.stringify(payload),
     });
-
     const data = await res.json();
-    setLessons((prevLessons) =>
-      prevLessons.map((lesson) => (lesson.id === data.id ? data : lesson))
-    );
+    setLessons((prev) => prev.map((l) => (l.id === data.id ? data : l)));
     setEditLesson(null);
   };
 
   const handleDeleteLesson = async (id: string) => {
-    const res = await fetch(`/api/lessons?id=${id}`, {
-      method: "DELETE",
-    });
-
-    const data = await res.json();
-    if (data) {
-      setLessons((prevLessons) =>
-        prevLessons.filter((lesson) => lesson.id !== id)
-      );
-    }
+    if (!confirm("Хичээлийг устгах уу?")) return;
+    await fetch(`/api/lessons?id=${id}`, { method: "DELETE" });
+    setLessons((prev) => prev.filter((l) => l.id !== id));
   };
 
   return (
@@ -79,20 +101,38 @@ const LessonsPage = () => {
           <Button
             variant="outline"
             onClick={() => router.back()}
-            className="text-[#24ffa5] border-[#24ffa5] hover:bg-[#13272e] active:bg-[#1bd193] active:text-[#0f181e]"
+            className="text-[#0f181e] border-[#6be4b9] hover:bg-[#13272e] active:bg-[#6be4b9] active:text-[#0f181e]"
           >
             ← Буцах
           </Button>
-          <h1 className="text-5xl font-extrabold text-[#24ffa5] text-center flex-1">
-            📚 Хичээлийн жагсаалт
+          <h1 className="text-3xl font-bold text-white text-center w-full border-b border-[#6be4b9] pb-4 mb-6">
+            📘 Хичээлийн жагсаалт
           </h1>
           <div className="w-24" />
         </div>
 
-        {/* Table */}
-        <div className="bg-[#13272e] p-6 rounded-xl shadow-2xl">
-          <table className="w-full text-sm divide-y divide-[#24ffa520]">
-            <thead className="bg-[#24ffa5] text-[#0f181e]">
+        {/* Search */}
+        <Input
+          placeholder="Хичээлийн нэр эсвэл кодоор хайх..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920]"
+        />
+
+        {/* Add New Button */}
+        <div className="text-center">
+          <Button
+            onClick={() => setIsAddOpen(true)}
+            className="bg-[#6be4b9] hover:bg-[#53dab0] text-[#0f181e] font-semibold px-6 py-2 rounded-lg"
+          >
+            ➕ Шинэ хичээл нэмэх
+          </Button>
+        </div>
+
+        {/* Lessons Table */}
+        <div className="bg-[#13272e] p-6 rounded-xl shadow-2xl max-h-[500px] overflow-y-auto">
+          <table className="w-full text-sm divide-y divide-[#6be4b920]">
+            <thead className="bg-[#6be4b9] text-[#0f181e]">
               <tr>
                 <th className="py-3 px-4 text-left">Код</th>
                 <th className="py-3 px-4 text-left">Нэр</th>
@@ -102,21 +142,21 @@ const LessonsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {lessons.map((lesson) => (
+              {filteredLessons.map((lesson) => (
                 <tr
                   key={lesson.id}
                   className="hover:bg-[#0f181e] transition duration-200"
                 >
-                  <td className="px-4 py-2 text-[#24ffa5] font-semibold">
+                  <td className="px-4 py-2 text-[#6be4b9] font-semibold">
                     {lesson.lesson_code}
                   </td>
                   <td className="px-4 py-2">{lesson.lesson_name}</td>
                   <td className="px-4 py-2 text-center">{lesson.credits}</td>
-                  <td className="px-4 py-2">{lesson.teacher?.name}</td>
+                  <td className="px-4 py-2">{lesson.teacher?.name ?? "—"}</td>
                   <td className="px-4 py-2 text-center space-x-2">
                     <Button
                       size="sm"
-                      className="bg-[#24ffa5] hover:bg-[#0f181e] active:bg-[#1bd193] active:text-[#0f181e] text-[#0f181e] font-semibold"
+                      className="bg-[#6be4b9] text-[#0f181e] font-semibold"
                       onClick={() => setEditLesson(lesson)}
                     >
                       Засах
@@ -124,7 +164,7 @@ const LessonsPage = () => {
                     <Button
                       size="sm"
                       variant="destructive"
-                      className="active:bg-red-800 active:text-white"
+                      className="text-white"
                       onClick={() => handleDeleteLesson(lesson.id)}
                     >
                       Устгах
@@ -136,146 +176,114 @@ const LessonsPage = () => {
           </table>
         </div>
 
-        {/* Add Form */}
-        <div className="bg-[#13272e] p-6 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-bold text-[#24ffa5] text-center mb-6">
-            ➕ Шинэ хичээл нэмэх
-          </h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            <Input
-              className="bg-[#0f181e] text-[#e3fef3] border border-[#24ffa520] rounded-lg"
-              value={newLesson.lesson_code}
-              onChange={(e) =>
-                setNewLesson({ ...newLesson, lesson_code: e.target.value })
-              }
-              placeholder="Хичээлийн код"
-            />
-            <Input
-              className="bg-[#0f181e] text-[#e3fef3] border border-[#24ffa520] rounded-lg"
-              value={newLesson.lesson_name}
-              onChange={(e) =>
-                setNewLesson({ ...newLesson, lesson_name: e.target.value })
-              }
-              placeholder="Хичээлийн нэр"
-            />
-            <Input
-              type="number"
-              className="bg-[#0f181e] text-[#e3fef3] border border-[#24ffa520] rounded-lg"
-              value={newLesson.credits}
-              onChange={(e) =>
-                setNewLesson({
-                  ...newLesson,
-                  credits: parseInt(e.target.value),
-                })
-              }
-              placeholder="Кредит"
-            />
-            <Input
-              className="bg-[#0f181e] text-[#e3fef3] border border-[#24ffa520] rounded-lg"
-              value={newLesson.teacher_id}
-              onChange={(e) =>
-                setNewLesson({ ...newLesson, teacher_id: e.target.value })
-              }
-              placeholder="Багшийн ID"
-            />
-            <div className="md:col-span-2">
-              <Input
-                className="bg-[#0f181e] text-[#e3fef3] border border-[#24ffa520] rounded-lg"
-                value={newLesson.description}
-                onChange={(e) =>
-                  setNewLesson({ ...newLesson, description: e.target.value })
-                }
-                placeholder="Тайлбар"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <Button
-                onClick={handleAddLesson}
-                className="w-full bg-[#24ffa5] hover:bg-[#0f181e] active:bg-[#1bd193] active:text-[#0f181e] text-[#0f181e] font-semibold"
-              >
-                Хичээл нэмэх
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Edit Form */}
+        {/* Modals */}
+        {isAddOpen && (
+          <LessonModal
+            lesson={newLesson}
+            setLesson={setNewLesson}
+            onSave={handleAddLesson}
+            onCancel={() => setIsAddOpen(false)}
+            isEditing={false}
+          />
+        )}
         {editLesson && (
-          <div className="bg-[#13272e] fixed inset-0 z-50 m-auto max-w-screen-md p-6 shadow-xl rounded-xl overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4 text-[#24ffa5] text-center">
-              ✏️ Хичээл засах
-            </h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              <Input
-                className="bg-[#0f181e] text-[#e3fef3] border border-[#24ffa520] rounded-lg"
-                value={editLesson.lesson_code}
-                onChange={(e) =>
-                  setEditLesson({ ...editLesson, lesson_code: e.target.value })
-                }
-                placeholder="Хичээлийн код"
-              />
-              <Input
-                className="bg-[#0f181e] text-[#e3fef3] border border-[#24ffa520] rounded-lg"
-                value={editLesson.lesson_name}
-                onChange={(e) =>
-                  setEditLesson({ ...editLesson, lesson_name: e.target.value })
-                }
-                placeholder="Хичээлийн нэр"
-              />
-              <Input
-                type="number"
-                className="bg-[#0f181e] text-[#e3fef3] border border-[#24ffa520] rounded-lg"
-                value={editLesson.credits}
-                onChange={(e) =>
-                  setEditLesson({
-                    ...editLesson,
-                    credits: parseInt(e.target.value),
-                  })
-                }
-                placeholder="Кредит"
-              />
-              <Input
-                className="bg-[#0f181e] text-[#e3fef3] border border-[#24ffa520] rounded-lg"
-                value={editLesson.teacher_id}
-                onChange={(e) =>
-                  setEditLesson({ ...editLesson, teacher_id: e.target.value })
-                }
-                placeholder="Багшийн ID"
-              />
-              <div className="md:col-span-2">
-                <Input
-                  className="bg-[#0f181e] text-[#e3fef3] border border-[#24ffa520] rounded-lg"
-                  value={editLesson.description}
-                  onChange={(e) =>
-                    setEditLesson({
-                      ...editLesson,
-                      description: e.target.value,
-                    })
-                  }
-                  placeholder="Тайлбар"
-                />
-              </div>
-              <div className="md:col-span-2 flex gap-2">
-                <Button
-                  onClick={handleEditLesson}
-                  className="w-full bg-[#24ffa5] hover:bg-[#0f181e] active:bg-[#1bd193] active:text-[#0f181e] text-[#0f181e] font-semibold"
-                >
-                  Хадгалах
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setEditLesson(null)}
-                  className="w-full border-[#24ffa5] text-[#24ffa5] hover:bg-[#0f181e] active:bg-[#1bd193] active:text-[#0f181e]"
-                >
-                  Болих
-                </Button>
-              </div>
-            </div>
-          </div>
+          <LessonModal
+            lesson={editLesson}
+            setLesson={setEditLesson}
+            onSave={handleEditLesson}
+            onCancel={() => setEditLesson(null)}
+            isEditing={true}
+          />
         )}
       </div>
     </div>
   );
 };
+
+type LessonModalProps = {
+  lesson: any;
+  setLesson: any;
+  onSave: () => void;
+  onCancel: () => void;
+  isEditing: boolean;
+};
+
+const LessonModal = ({
+  lesson,
+  setLesson,
+  onSave,
+  onCancel,
+  isEditing,
+}: LessonModalProps) => (
+  <div className="bg-[#13272e]/90 fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="bg-[#0f181e] p-6 rounded-xl shadow-lg w-full max-w-2xl space-y-4 overflow-y-auto max-h-[90vh]">
+      <h2 className="text-2xl font-bold text-center text-[#6be4b9] mb-6">
+        {isEditing ? "✏️ Хичээл засах" : "➕ Шинэ хичээл нэмэх"}
+      </h2>
+      <div className="grid md:grid-cols-2 gap-4">
+        <Input
+          value={lesson.lesson_code}
+          onChange={(e) =>
+            setLesson({ ...lesson, lesson_code: e.target.value })
+          }
+          placeholder="Хичээлийн код"
+          className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
+        />
+        <Input
+          value={lesson.lesson_name}
+          onChange={(e) =>
+            setLesson({ ...lesson, lesson_name: e.target.value })
+          }
+          placeholder="Хичээлийн нэр"
+          className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
+        />
+        <select
+          value={lesson.credits}
+          onChange={(e) =>
+            setLesson({ ...lesson, credits: parseInt(e.target.value) })
+          }
+          className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg px-3 py-2"
+        >
+          {[1, 2, 3, 4, 5].map((credit) => (
+            <option key={credit} value={credit}>
+              {credit} кредит
+            </option>
+          ))}
+        </select>
+        <Input
+          value={lesson.teacher_id ?? ""}
+          onChange={(e) => setLesson({ ...lesson, teacher_id: e.target.value })}
+          placeholder="Багшийн ID (заавал биш)"
+          className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
+        />
+        <div className="md:col-span-2">
+          <Input
+            value={lesson.description}
+            onChange={(e) =>
+              setLesson({ ...lesson, description: e.target.value })
+            }
+            placeholder="Тайлбар"
+            className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
+          />
+        </div>
+      </div>
+      <div className="flex gap-4 pt-4">
+        <Button
+          onClick={onSave}
+          className="w-full bg-[#6be4b9] text-[#0f181e] font-semibold"
+        >
+          Хадгалах
+        </Button>
+        <Button
+          onClick={onCancel}
+          variant="outline"
+          className="w-full border-[#6be4b9] text-[#6be4b9]"
+        >
+          Болих
+        </Button>
+      </div>
+    </div>
+  </div>
+);
 
 export default LessonsPage;

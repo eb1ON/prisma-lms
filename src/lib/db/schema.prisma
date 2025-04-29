@@ -27,9 +27,42 @@ model Users {
     Lesson_list Lesson_list[]
     Timetable   Timetable[]
     Lesson      Lesson[]
-    sentPosts   Post[]        @relation("TeacherRelation")
-    Reciever    Chat[]        @relation("RecievedMessages")
-    Sender      Chat[]        @relation("SentMessages")
+    Assignment  Assignment[]
+
+    // ✨ ШИНЭ нэмэлтүүд:
+    submissionsAsStudent Submission[] @relation("StudentSubmission")
+    submissionsAsTeacher Submission[] @relation("TeacherSubmission")
+    sentPosts            Post[]       @relation("TeacherRelation")
+    Reciever             Chat[]       @relation("RecievedMessages")
+    Sender               Chat[]       @relation("SentMessages")
+}
+
+model Assignment {
+    id          String   @id @default(cuid())
+    title       String
+    description String
+    fileUrl     String?
+    course      Int
+    teacherId   String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    teacher     Users        @relation(fields: [teacherId], references: [user_id])
+    submissions Submission[] // ✨ нэмсэн
+}
+
+model Submission {
+    id           String   @id @default(cuid())
+    assignmentId String
+    studentId    String
+    teacherId    String
+    fileUrl      String
+    score        Int? // 👈 Нэмэгдсэн талбар
+    createdAt    DateTime @default(now())
+
+    assignment Assignment @relation(fields: [assignmentId], references: [id])
+    student    Users      @relation(name: "StudentSubmission", fields: [studentId], references: [user_id])
+    teacher    Users      @relation(name: "TeacherSubmission", fields: [teacherId], references: [user_id])
 }
 
 model Roadmap {
@@ -40,23 +73,24 @@ model Roadmap {
     type        TypesGP?
     semester    Semester?
     school_year Int?
+    Description String?
 }
 
 model Lesson_list {
     id String @id @default(cuid())
 
-    lesson_code String    @unique
+    lesson_code String      @unique
     lesson_name String
     credits     Int
     description String?
-    teacher     Users?    @relation(fields: [teacher_id], references: [user_id])
+    teacher     Users?      @relation(fields: [teacher_id], references: [user_id])
     teacher_id  String?
     school_year Int?
     type        TypesGP?
     semester    Semester?
-
-    Timetable Timetable[]
-    Lesson    Lesson[]
+    image       String?
+    Timetable   Timetable[]
+    Lesson      Lesson[]
 }
 
 model Lesson {
@@ -65,6 +99,7 @@ model Lesson {
     lessonCode  String
     title       String
     description String?
+    week        Int?
     pdfUrl      String? // PDF URL
     videoUrl    String?
     school_year Int?
@@ -79,33 +114,13 @@ model Lesson {
 model Timetable {
     id          Int         @id @default(autoincrement())
     lesson_code String
-    teacher_id  String
+    teacher_id  String?
     weekdays    WeekDay
     start_time  String
     end_time    String
     school_year Int // Талбарыг зөв тодорхойлж байна
     lesson      Lesson_list @relation(fields: [lesson_code], references: [lesson_code], onDelete: Cascade)
-    teacher     Users       @relation(fields: [teacher_id], references: [user_id], onDelete: Cascade)
-}
-
-model Post {
-    post_id     Int      @id @default(autoincrement())
-    teacher_id  String
-    teacher     Users    @relation("TeacherRelation", fields: [teacher_id], references: [user_id], onDelete: Cascade)
-    title       String?
-    body        String?
-    created_at  DateTime @default(now())
-    school_year Int?
-}
-
-model Chat {
-    chat_id     Int      @id @default(autoincrement())
-    sender_id   String
-    sender      Users    @relation("SentMessages", fields: [sender_id], references: [user_id], onDelete: Cascade)
-    reciever_id String
-    reciever    Users    @relation("RecievedMessages", fields: [reciever_id], references: [user_id], onDelete: Cascade)
-    message     String
-    created_at  DateTime @default(now())
+    teacher     Users?      @relation(fields: [teacher_id], references: [user_id], onDelete: Cascade)
 }
 
 model Schedule {
@@ -196,8 +211,6 @@ model Authenticator {
 
     @@id([userId, credentialID])
 }
-<<<<<<< HEAD
-=======
 
 model Post {
     post_id     Int      @id @default(autoincrement())
@@ -218,4 +231,3 @@ model Chat {
     message     String
     created_at  DateTime @default(now())
 }
->>>>>>> e55b6adfd72468ec03cd44da5d9e2744d0f61fc6

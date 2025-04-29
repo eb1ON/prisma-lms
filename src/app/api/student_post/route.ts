@@ -9,7 +9,10 @@ export async function GET(req: NextRequest) {
     // Хэрэглэгчийн сессийг шалгах
     const session = await auth();
     if (!session || !session.user) {
-      return NextResponse.json({ error: "Хэрэглэгч нэвтрээгүй байна" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Хэрэглэгч нэвтрээгүй байна" },
+        { status: 401 }
+      );
     }
 
     // Хэрэглэгчийн мэдээллийг авах
@@ -17,21 +20,19 @@ export async function GET(req: NextRequest) {
     if (!email) {
       throw new Error("Email is required");
     }
-   
+
     const currentUser = await prisma.users.findUnique({
       where: { email },
     });
 
     if (!currentUser || currentUser.role !== "student") {
-      return NextResponse.json({ error: "Хэрэглэгч сурагч биш байна" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Хэрэглэгч сурагч биш байна" },
+        { status: 403 }
+      );
     }
 
     // Сургалтын жилд таарсан постуудыг татах
-    const posts = await prisma.post.findMany({
-      where: { school_year: currentUser.school_year },
-      select: { title: true, body: true, teacher_id: true },
-      orderBy: { created_at: "asc" },
-    });
 
     return NextResponse.redirect(new URL("/communicate/student_post", req.url));
   } catch (error) {
