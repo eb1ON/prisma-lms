@@ -1,4 +1,6 @@
 import { prisma } from "../../../lib/prisma";
+import Link from "next/link";
+import DescriptionPanel from "@/components/DescriptionPanel"; // 👈 DescriptionModal импорт
 
 export default async function CoursePage({
   params,
@@ -17,6 +19,7 @@ export default async function CoursePage({
       type: true,
       semester: true,
       school_year: true,
+      Description: true,
     },
   });
 
@@ -24,7 +27,7 @@ export default async function CoursePage({
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#1c1f23]">
         <h1 className="text-3xl font-bold text-red-500">
-          Roadmap олоогүй байна!{" "}
+          Roadmap олоогүй байна!
         </h1>
       </div>
     );
@@ -53,13 +56,13 @@ export default async function CoursePage({
               style={{
                 backgroundColor:
                   semester === "Намар"
-                    ? "#24ffa5" // Намрын улиралд алтлаг өнгө
+                    ? "#24ffa5"
                     : semester === "Хавар"
-                    ? "#24ffa5" // Хаврын улиралд ногоон өнгө
-                    : "#2e3d3e", // Мэдээлэл байхгүй үед илүү харанхуй өнгө
+                    ? "#24ffa5"
+                    : "#2e3d3e",
               }}
             >
-              <span className="text-shadow">
+              <span>
                 {semester === "Хавар"
                   ? " Хаврын улиралд"
                   : semester === "Намар"
@@ -78,7 +81,7 @@ export default async function CoursePage({
                   return (
                     <details
                       key={idx}
-                      className=" rounded-lg bg-[#1c1f23] open:shadow-md transition-all duration-300"
+                      className="rounded-lg bg-[#1c1f23] open:shadow-md transition-all duration-300"
                     >
                       <summary className="cursor-pointer font-semibold text-xl p-4 select-none text-gray-300 hover:text-[#24ffa5]">
                         {type === "Pro"
@@ -90,7 +93,7 @@ export default async function CoursePage({
                         {filteredItems.map((roadmap, idx) => (
                           <div
                             key={idx}
-                            className="lesson-card p-4 boder-[#6be4b9] shadow-md shadow-[#24ffa5] rounded-lg bg-[#1c1f23]"
+                            className="lesson-card p-4 shadow-md shadow-[#24ffa5] rounded-lg bg-[#1c1f23]"
                           >
                             <h4 className="text-lg font-bold text-[#24ffa5]">
                               {roadmap.lesson_name}
@@ -98,6 +101,16 @@ export default async function CoursePage({
                             <p className="text-sm text-[#a8a8a8]">
                               Кредит: {roadmap.credits}
                             </p>
+                            <Link
+                              href={`?description=${encodeURIComponent(
+                                roadmap.Description || ""
+                              )}`}
+                              scroll={false}
+                            >
+                              <p className="text-sm text-[#a8a8a8] cursor-pointer hover:underline">
+                                Агуулга харах
+                              </p>
+                            </Link>
                           </div>
                         ))}
                       </div>
@@ -109,6 +122,9 @@ export default async function CoursePage({
           </div>
         ))}
       </div>
+
+      {/* ⬇️ Description гарч ирэх modal/panel */}
+      <DescriptionPanel />
     </div>
   );
 }
