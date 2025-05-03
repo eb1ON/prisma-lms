@@ -4,19 +4,29 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { LessonList } from "@/types/lesson";
+
+type LessonModalProps = {
+  lesson: LessonList;
+  setLesson: React.Dispatch<React.SetStateAction<LessonList>>;
+  onSave: () => void;
+  onCancel: () => void;
+  isEditing: boolean;
+};
 
 const LessonsPage = () => {
   const router = useRouter();
-  const [lessons, setLessons] = useState<any[]>([]);
-  const [filteredLessons, setFilteredLessons] = useState<any[]>([]);
-  const [newLesson, setNewLesson] = useState({
+  const [lessons, setLessons] = useState<LessonList[]>([]);
+  const [filteredLessons, setFilteredLessons] = useState<LessonList[]>([]);
+  const [newLesson, setNewLesson] = useState<LessonList>({
+    id: "",
     lesson_code: "",
     lesson_name: "",
     credits: 1,
     description: "",
     teacher_id: "",
   });
-  const [editLesson, setEditLesson] = useState<any | null>(null);
+  const [editLesson, setEditLesson] = useState<LessonList | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -48,7 +58,7 @@ const LessonsPage = () => {
     const payload = {
       ...newLesson,
       teacher_id:
-        newLesson.teacher_id.trim() === "" ? null : newLesson.teacher_id,
+        newLesson.teacher_id?.trim() === "" ? null : newLesson.teacher_id,
     };
     const res = await fetch("/api/lessons", {
       method: "POST",
@@ -58,6 +68,7 @@ const LessonsPage = () => {
     const data = await res.json();
     setLessons((prev) => [...prev, data]);
     setNewLesson({
+      id: "",
       lesson_code: "",
       lesson_name: "",
       credits: 1,
@@ -68,7 +79,7 @@ const LessonsPage = () => {
   };
 
   const handleEditLesson = async () => {
-    if (!editLesson.lesson_code || !editLesson.lesson_name) {
+    if (!editLesson?.lesson_code || !editLesson.lesson_name) {
       alert("Бүх заавал талбарыг бөглөнө үү!");
       return;
     }
@@ -96,7 +107,6 @@ const LessonsPage = () => {
   return (
     <div className="fixed inset-0 overflow-y-auto bg-[#0f181e] py-10 px-6 text-[#e3fef3] font-sans">
       <div className="w-full max-w-6xl mx-auto space-y-12">
-        {/* Header */}
         <div className="flex justify-between items-center gap-4">
           <Button
             variant="outline"
@@ -111,7 +121,6 @@ const LessonsPage = () => {
           <div className="w-24" />
         </div>
 
-        {/* Search */}
         <Input
           placeholder="Хичээлийн нэр эсвэл кодоор хайх..."
           value={searchTerm}
@@ -119,7 +128,6 @@ const LessonsPage = () => {
           className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920]"
         />
 
-        {/* Add New Button */}
         <div className="text-center">
           <Button
             onClick={() => setIsAddOpen(true)}
@@ -129,7 +137,6 @@ const LessonsPage = () => {
           </Button>
         </div>
 
-        {/* Lessons Table */}
         <div className="bg-[#13272e] p-6 rounded-xl shadow-2xl max-h-[500px] overflow-y-auto">
           <table className="w-full text-sm divide-y divide-[#6be4b920]">
             <thead className="bg-[#6be4b9] text-[#0f181e]">
@@ -176,7 +183,6 @@ const LessonsPage = () => {
           </table>
         </div>
 
-        {/* Modals */}
         {isAddOpen && (
           <LessonModal
             lesson={newLesson}
@@ -198,14 +204,6 @@ const LessonsPage = () => {
       </div>
     </div>
   );
-};
-
-type LessonModalProps = {
-  lesson: any;
-  setLesson: any;
-  onSave: () => void;
-  onCancel: () => void;
-  isEditing: boolean;
 };
 
 const LessonModal = ({
