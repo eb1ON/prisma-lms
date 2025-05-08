@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
-import db from "@/lib/db"; // Prisma client
+import { PrismaClient, Role } from "@prisma/client"; // 👈 Role-г зөв газраас импортолсон
+import path from "path";
+import { writeFile } from "fs/promises";
 
-// GET: Бүх хэрэглэгчийн мэдээллийг авах
-export async function GET() {
+const db = new PrismaClient();
+
+// GET: Бүх хэрэглэгч авах
+export async function GET(request: Request) {
   try {
     const users = await db.users.findMany();
     return NextResponse.json(users);
@@ -15,21 +19,40 @@ export async function GET() {
   }
 }
 
-// POST: Шинэ хэрэглэгч нэмэх
+// POST: Хэрэглэгч нэмэх (FormData, зураг upload)
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { user_id, name, email, password, role, school_year } = body;
+    const formData = await request.formData();
+    const user_id = formData.get("user_id") as string;
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const role = formData.get("role") as Role; // ✅ Role enum ашигласан
+    const school_year = Number(formData.get("school_year"));
+    const file = formData.get("image") as File;
 
-    // Хэрэглэгч нэмэх
+    let filePath = null;
+
+    if (file && file.size > 0) {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const filename = `${Date.now()}-${file.name}`;
+      const uploadPath = path.join(process.cwd(), "public/uploads", filename);
+
+      await writeFile(uploadPath, buffer);
+      filePath = `/uploads/${filename}`;
+    }
+
     const user = await db.users.create({
       data: {
         user_id,
         name,
         email,
-        password, // password-ийг хэшлэх шаардлагатай
+        password,
         role,
         school_year,
+        image: filePath,
       },
     });
 
@@ -40,13 +63,32 @@ export async function POST(request: Request) {
   }
 }
 
-// PUT: Хэрэглэгчийн мэдээллийг засах
+// PUT: Хэрэглэгч засах (FormData, зураг шинэчлэх боломжтой)
 export async function PUT(request: Request) {
   try {
-    const body = await request.json();
-    const { id, user_id, name, email, role, school_year } = body;
+    const formData = await request.formData();
+    const id = formData.get("id") as string;
+    const user_id = formData.get("user_id") as string;
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const role = formData.get("role") as Role; // ✅ Role enum ашигласан
+    const school_year = Number(formData.get("school_year"));
+    const currentImage = formData.get("currentImage") as string;
+    const file = formData.get("image") as File;
 
-    // Хэрэглэгчийн мэдээллийг засах
+    let filePath = currentImage;
+
+    if (file && file.size > 0) {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      const filename = `${Date.now()}-${file.name}`;
+      const uploadPath = path.join(process.cwd(), "public/uploads", filename);
+
+      await writeFile(uploadPath, buffer);
+      filePath = `/uploads/${filename}`;
+    }
+
     const user = await db.users.update({
       where: { id },
       data: {
@@ -55,6 +97,7 @@ export async function PUT(request: Request) {
         email,
         role,
         school_year,
+        image: filePath,
       },
     });
 
@@ -74,14 +117,12 @@ export async function DELETE(request: Request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
-    // ID-ийг шалгах (ID байхгүй бол алдаа буцаах)
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
-    // Хэрэглэгчийн ID-г устгах (UUID эсвэл String ID)
     const user = await db.users.delete({
-      where: { id }, // ID-г шууд string болгон өгнө
+      where: { id },
     });
 
     return NextResponse.json(user, { status: 200 });

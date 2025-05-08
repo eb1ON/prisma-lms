@@ -10,7 +10,7 @@ const SignOut = () => {
   return (
     <div className="flex justify-center">
       <Button
-        className="bg-[#283131] text-[#6be4b9] border border-[#6be4b9]"
+        className="bg-[#5584c6] text-white font-bold border border-[#5584c6]"
         variant="destructive"
         onClick={handleSignOut}
       >

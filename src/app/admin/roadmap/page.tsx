@@ -96,18 +96,18 @@ const RoadmapPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#0f181e] py-12 px-8 text-[#e3fef3] font-sans">
+    <div className="fixed inset-0 overflow-y-auto bg-white py-12 px-8 text-[#e3fef3] font-sans">
       <div className="w-full max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8 gap-4">
           <Button
             variant="outline"
             onClick={() => router.back()}
-            className="text-[#0f181e] border-[#6be4b9] hover:bg-[#13272e] active:bg-[#6be4b9] active:text-[#0f181e]"
+            className="text-gray-800 bg-[#e9ebee] border shadow-sm hover:bg-[#5584c6] active:bg-[#5584c6]/50 active:text-gray-800"
           >
             ← Буцах
           </Button>
-          <h1 className="text-3xl font-bold text-white text-center w-full border-b border-[#6be4b9] pb-4 mb-6">
+          <h1 className="text-3xl font-bold text-black text-center w-full border-b border-[#5584c6] pb-4 mb-6">
             📌 Roadmap Хичээлүүд
           </h1>
           <div className="w-24" />
@@ -119,10 +119,10 @@ const RoadmapPage = () => {
             placeholder="Хичээлийн нэр эсвэл кодоор хайх..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-[#0f181e] text-white border border-[#6be4b920] w-full md:w-1/2"
+            className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] w-full md:w-1/2"
           />
           <select
-            className="bg-[#0f181e] text-white border border-[#6be4b920] px-4 py-2 rounded-lg w-full md:w-1/4"
+            className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] px-4 py-2 rounded-lg w-full md:w-1/4"
             value={filterYear}
             onChange={(e) =>
               setFilterYear(
@@ -143,7 +143,7 @@ const RoadmapPage = () => {
         <div className="text-center mb-8">
           <Button
             onClick={() => setIsAddOpen(true)}
-            className="bg-[#6be4b9] hover:bg-[#53dab0] text-[#0f181e] font-semibold px-6 py-2 rounded-lg"
+            className="bg-[#e9ebee] hover:bg-[#5584c6] text-gray-800 font-semibold px-6 py-2 rounded-lg"
           >
             ➕ Шинэ хичээл нэмэх
           </Button>
@@ -153,12 +153,15 @@ const RoadmapPage = () => {
         <div className="space-y-6">
           {Object.entries(groupBySchoolYear(filteredRoadmaps)).map(
             ([year, items]) => (
-              <div key={year} className="bg-[#13272e] p-6 rounded-xl shadow-xl">
-                <h3 className="text-xl text-[#6be4b9] font-bold mb-4">
+              <div
+                key={year}
+                className="bg-white border p-6 rounded-xl shadow-2xl"
+              >
+                <h3 className="text-xl text-gray-800 font-bold mb-4">
                   🎓 {year}-р курс ({items.length} хичээл)
                 </h3>
                 <table className="w-full text-sm divide-y divide-[#6be4b920]">
-                  <thead className="bg-[#6be4b9] text-[#0f181e]">
+                  <thead className="bg-[#e9ebee] text-gray-800">
                     <tr>
                       <th className="py-3 px-4 text-left">Код</th>
                       <th className="py-3 px-4 text-left">Нэр</th>
@@ -170,8 +173,8 @@ const RoadmapPage = () => {
                   </thead>
                   <tbody>
                     {items.map((item: any) => (
-                      <tr key={item.id} className="hover:bg-[#0f181e]">
-                        <td className="px-4 py-2 text-[#6be4b9] font-semibold">
+                      <tr key={item.id} className="text-gray-800">
+                        <td className="px-4 py-2 text-black font-semibold">
                           {item.lesson_code}
                         </td>
                         <td className="px-4 py-2">{item.lesson_name}</td>
@@ -181,7 +184,7 @@ const RoadmapPage = () => {
                         <td className="px-4 py-2 text-center space-x-2">
                           <Button
                             size="sm"
-                            className="bg-[#6be4b9] text-[#0f181e]"
+                            className="bg-[#e9ebee] text-gray-800 hover:bg-[#5584c6] border shadow-md"
                             onClick={() => setEditItem(item)}
                           >
                             Засах
@@ -189,6 +192,7 @@ const RoadmapPage = () => {
                           <Button
                             size="sm"
                             variant="destructive"
+                            className="text-gray-800 bg-[#e9ebee] border hover:bg-red-500 shadow-md"
                             onClick={() => handleDelete(item.id)}
                           >
                             Устгах
@@ -244,9 +248,9 @@ const LessonModal = ({
   onCancel,
   isEditing,
 }: LessonModalProps) => (
-  <div className="bg-[#13272e]/90 fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div className="bg-[#0f181e] p-6 rounded-xl shadow-lg w-full max-w-2xl space-y-6">
-      <h2 className="text-2xl font-bold text-center text-[#6be4b9] mb-6">
+  <div className="bg-white/70 fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="bg-white border p-6 rounded-2xl shadow-lg w-full max-w-2xl space-y-6">
+      <h2 className="text-2xl font-bold text-center text-black mb-6">
         {isEditing ? "✏️ Хичээл засах" : "➕ Хичээл нэмэх"}
       </h2>
       <div className="grid md:grid-cols-2 gap-4">
@@ -256,7 +260,7 @@ const LessonModal = ({
             setLesson({ ...lesson, lesson_code: e.target.value })
           }
           placeholder="Код"
-          className="bg-[#0f181e] text-white border border-[#6be4b920] rounded-lg"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg"
         />
         <Input
           value={lesson.lesson_name}
@@ -264,7 +268,7 @@ const LessonModal = ({
             setLesson({ ...lesson, lesson_name: e.target.value })
           }
           placeholder="Нэр"
-          className="bg-[#0f181e] text-white border border-[#6be4b920] rounded-lg"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg"
         />
         <Input
           type="number"
@@ -273,26 +277,26 @@ const LessonModal = ({
             setLesson({ ...lesson, credits: parseInt(e.target.value) })
           }
           placeholder="Кредит"
-          className="bg-[#0f181e] text-white border border-[#6be4b920] rounded-lg"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg"
         />
         <Input
           value={lesson.type}
           onChange={(e) => setLesson({ ...lesson, type: e.target.value })}
           placeholder="Төрөл"
-          className="bg-[#0f181e] text-white border border-[#6be4b920] rounded-lg"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg"
         />
         <Input
           value={lesson.semester}
           onChange={(e) => setLesson({ ...lesson, semester: e.target.value })}
           placeholder="Семестер"
-          className="bg-[#0f181e] text-white border border-[#6be4b920] rounded-lg"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg"
         />
         <select
           value={lesson.school_year}
           onChange={(e) =>
             setLesson({ ...lesson, school_year: parseInt(e.target.value) })
           }
-          className="bg-[#0f181e] text-white border border-[#6be4b920] rounded-lg px-3 py-2"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg px-3 py-2"
         >
           <option value={0}>Курс сонгох</option>
           {[1, 2, 3, 4, 5].map((y) => (
@@ -307,14 +311,14 @@ const LessonModal = ({
       <div className="flex gap-4 pt-4">
         <Button
           onClick={onSave}
-          className="w-full bg-[#6be4b9] text-[#0f181e] font-semibold"
+          className="w-full bg-[#e9ebee] border border-[#5584c6] text-gray-800 hover:bg-[#5584c6] font-semibold"
         >
           Хадгалах
         </Button>
         <Button
           onClick={onCancel}
           variant="outline"
-          className="w-full border-[#6be4b9] text-[#6be4b9]"
+          className="w-full bg-[#e9ebee] text-gray-800 hover:bg-red-500"
         >
           Болих
         </Button>

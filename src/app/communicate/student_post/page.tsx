@@ -9,20 +9,11 @@ export default async function StudentPostPage({
   params: { teacher_id?: string };
 }) {
   const session = await auth();
-  if (!session || !session.user) {
-    redirect("/sign-in");
-  }
+  if (!session || !session.user) redirect("/sign-in");
 
   const email = session.user.email!;
   const currentUser = await prisma.users.findUnique({ where: { email } });
-  if (!currentUser) {
-    redirect("/sign-in");
-  }
-
-  const selectedButton =
-    currentUser.role === "teacher"
-      ? "/communicate/teacher_post"
-      : "/communicate/student_post";
+  if (!currentUser) redirect("/sign-in");
 
   const schoolYear = currentUser.school_year;
   const teachers = await prisma.users.findMany({
@@ -39,98 +30,87 @@ export default async function StudentPostPage({
   });
 
   return (
-    <div className="flex flex-col mt-3 mb-5 w-full h-screen border-b rounded-md border-[#6be4b9] bg-[#1e2627] overflow-hidden">
-      {/* Top Navigation */}
-      <div className="flex w-full h-12 bg-[#313f40] border border-[#6be4b9] mb-1 rounded-sm">
-        <Link
-          href={selectedButton}
-          className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black flex items-center justify-center"
-        >
-          Нийтлэл
-        </Link>
-        <Link
-          href={`/communicate/${selectedTeacherId}`}
-          className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black flex items-center justify-center"
-        >
-          Мессеж
-        </Link>
-      </div>
+    <div className="flex flex-col w-full h-screen bg-background overflow-hidden text-foreground">
+      <div className="flex w-full bg-background h-full">
+        {/* Posts Section */}
+        <div className="w-9/12 flex flex-col bg-background p-2 m-0 min-h-0">
+          <div className="flex-1 min-h-0 overflow-y-auto p-4">
+            <div className="bg-gradient-to-br from-[#a0bbdf] from-40% to-[#c68c8c] shadow-xl rounded-md p-3 mb-3 flex items-center space-x-5">
+              <img
+                src="https://png.pngtree.com/png-vector/20220210/ourmid/pngtree-avatar-bussinesman-man-profile-icon-vector-illustration-png-image_4384273.png"
+                className="w-14 ml-5 h-14 rounded-full border border-primary shadow"
+              />
+              <h2 className="text-xl font-bold text-white">
+                {currentUser.name}
+              </h2>
+            </div>
 
-      {/* User Info */}
-      <div className="mt-3 flex justify-start space-x-3 items-center px-8">
-        <img
-          src="https://png.pngtree.com/png-vector/20220210/ourmid/pngtree-avatar-bussinesman-man-profile-icon-vector-illustration-png-image_4384273.png"
-          alt="User Profile"
-          className="w-10 h-10 rounded-full border border-purple-500 shadow-md"
-        />
-        <div>
-          <h1 className="text-xl font-semibold text-[#6be4b9]">
-            {currentUser.name}
-          </h1>
-          <p className="text-sm text-gray-300">
-            {currentUser.role === "teacher" ? "Багш" : "Оюутан"}
-          </p>
-        </div>
-      </div>
-
-      {/* Main Section */}
-      <div className="flex w-full overflow-y-auto h-full">
-        {/* Sidebar - багш нарын жагсаалт */}
-        <div className="w-3/12 bg-[#313f40] mt-5 rounded-md shadow-lg shadow-[#6be4b9] border-r border-[#6be4b9] pt-16 mr-5 overflow-y-auto">
-          <ul className="space-y-2">
-            {teachers.map((teacher) => (
-              <li key={teacher.user_id}>
-                <a
-                  href={`/communicate/${teacher.user_id}`}
-                  className={`p-3 flex justify-center text-lg font-semibold rounded ${
-                    selectedTeacherId === teacher.user_id
-                      ? "bg-[#6be4b9] text-black"
-                      : "text-gray-300 hover:bg-[#6be4b9] hover:text-black"
-                  }`}
-                >
-                  {teacher.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Posts */}
-        <div className="shadow-md shadow-[#6be4b9] border border-[#6be4b9] w-9/12 h-full flex flex-col rounded-lg mt-5 ml-2">
-          {/* Header area */}
-          <div className="m-3 p-2 w-auto rounded-lg mb-4 flex items-center bg-[#6be4b9] space-x-4">
-            <img
-              src="https://png.pngtree.com/png-vector/20220210/ourmid/pngtree-avatar-bussinesman-man-profile-icon-vector-illustration-png-image_4384273.png"
-              alt="User Profile"
-              className="w-10 h-10 rounded-full border border-purple-500 shadow-md"
-            />
-            <h1 className="font-bold text-gray-800 text-xl">
-              {currentUser.name}
-            </h1>
-          </div>
-
-          {/* Scrollable posts */}
-          <div className="flex-1 items-center ml-56 overflow-y-auto pr-2">
             {posts.length === 0 ? (
-              <p className="text-gray-400 pt-10 text-center">
+              <p className="text-muted-foreground text-center pt-10">
                 Одоогоор пост алга байна.
               </p>
             ) : (
               posts.map((post, index) => (
                 <div
                   key={index}
-                  className="mb-4 w-96 p-4 bg-[#313f40] rounded-md shadow-md shadow-[#6be4b9]"
+                  className="bg-card border border-border p-4 mb-3 rounded-lg shadow"
                 >
-                  <h3 className="text-lg font-semibold text-white">
+                  <h3 className="font-semibold text-primary text-lg">
                     {post.title}
                   </h3>
-                  <p className="text-gray-300">{post.body}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-foreground mt-2">{post.body}</p>
+                  <p className="text-sm text-muted-foreground mt-1">
                     Багшийн ID: {post.teacher_id}
                   </p>
                 </div>
               ))
             )}
+          </div>
+        </div>
+
+        {/* Sidebar → Teachers */}
+        <div className="flex flex-col justify-center items-center bg-card shadow-xl h-full pt-3 pl-10 ml-0 pr-6 border-l border-border">
+          <div className="flex flex-col bg-gradient-to-br from-[#a0bbdf] from-40% to-[#c68c8c] p-6 w-[350px] h-[180px] rounded-xl items-center justify-center">
+            <img
+              src="https://png.pngtree.com/png-vector/20220210/ourmid/pngtree-avatar-bussinesman-man-profile-icon-vector-illustration-png-image_4384273.png"
+              alt="User Profile"
+              className="w-16 h-16 rounded-full mb-4 shadow-md"
+            />
+            <div className="text-center">
+              <h1 className="text-xl text-white font-semibold">
+                {currentUser.name}
+              </h1>
+              <p className="text-md text-gray-200">
+                {currentUser.role === "teacher" ? "Багш" : "Оюутан"}
+              </p>
+            </div>
+          </div>
+
+          <h2 className="text-lg font-bold text-primary mt-8">📚 Багш нар</h2>
+          <div className="bg-card rounded-xl overflow-y-auto pt-4 mt-4 mb-4">
+            <ul className="space-y-5">
+              {teachers.map((teacher) => (
+                <li
+                  key={teacher.user_id}
+                  className={`flex items-center w-[330px] shadow space-x-3 p-2 ml-0 hover:bg-primary rounded-full transition ${
+                    selectedTeacherId === teacher.user_id
+                      ? "bg-primary text-primary-foreground"
+                      : "text-foreground"
+                  }`}
+                >
+                  <img
+                    src="https://png.pngtree.com/png-vector/20220210/ourmid/pngtree-avatar-bussinesman-man-profile-icon-vector-illustration-png-image_4384273.png"
+                    className="w-10 h-10 rounded-full shadow"
+                  />
+                  <Link
+                    href={`/communicate/${teacher.user_id}`}
+                    className="text-lg font-semibold"
+                  >
+                    {teacher.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

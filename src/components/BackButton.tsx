@@ -13,9 +13,9 @@ const BackButton = () => {
   return (
     <button
       onClick={handleGoBack}
-      className="bg-[#6be4b9] text-white py-3 px-6 rounded-lg shadow-lg hover:bg-[#56c59b] transition-all duration-300"
+      className="bg-[#5584c6] text-white py-3 px-6 rounded-lg shadow-lg hover:bg-[#5584c6] transition-all duration-300"
     >
-      ← Back
+      ← Буцах
     </button>
   );
 };

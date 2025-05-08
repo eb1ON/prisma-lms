@@ -1,188 +1,197 @@
 import { auth } from "@/lib/auth";
 import { PrismaClient } from "@prisma/client";
 import { redirect } from "next/navigation";
+import Calendar from "@/components/HomeCalendar";
 
 const prisma = new PrismaClient();
 
-const Home = async () => {
+export default async function HomePage() {
   const session = await auth();
-
-  if (!session || !session.user) {
-    redirect("/sign-in");
-    return null;
-  }
+  if (!session?.user) redirect("/auth/sign-in");
 
   const user = await prisma.users.findUnique({
-    where: { email: session.user.email },
+    where: { email: session.user.email ?? undefined },
   });
-
-  if (!user) {
-    redirect("/sign-in");
-    return null;
-  }
+  if (!user) redirect("/sign-in");
 
   const timetableData = await prisma.timetable.findMany({
     where:
       user.role === "teacher"
         ? { teacher_id: user.user_id }
-        : { school_year: user.school_year || undefined },
+        : { school_year: user.school_year ?? undefined },
     include: { lesson: true },
   });
 
-  const today = new Date();
-  const closestSchedule = await prisma.schedule.findFirst({
-    where: {
-      date: {
-        gte: today,
-      },
-    },
-    orderBy: {
-      date: "asc",
-    },
-  });
+  const assignments =
+    user.role === "student"
+      ? await prisma.assignment.findMany({
+          where: { course: user.school_year ?? 0 },
+          include: { teacher: { select: { name: true, image: true } } },
+          orderBy: { createdAt: "desc" },
+        })
+      : [];
+
+  const submissions =
+    user.role === "teacher"
+      ? await prisma.submission.findMany({
+          where: { teacherId: user.user_id },
+          include: {
+            assignment: { select: { title: true } },
+            student: { select: { name: true } },
+          },
+          orderBy: { createdAt: "desc" },
+        })
+      : [];
 
   const weekdays = ["Даваа", "Мягмар", "Лхагва", "Пүрэв", "Баасан"];
-  const timeSlots = [
-    "08:50 - 10:10",
-    "10:20 - 11:40",
-    "11:50 - 13:10",
-    "14:00 - 15:20",
-    "15:30 - 16:50",
-  ];
+  const timeSlots = ["08:50", "10:20", "11:50", "14:00", "15:30"];
 
   const getLessonForTimeSlot = (day: string, slot: string) => {
-    const startTime = slot.split(" - ")[0];
     const entry = timetableData.find(
-      (entry) => entry.weekdays === day && entry.start_time === startTime
+      (entry) => entry.weekdays === day && entry.start_time === slot
     );
     return entry ? entry.lesson.lesson_name : "-";
   };
 
   return (
-    <div className="bg-[#283131] min-h-screen py-10 px-4 md:px-10 font-sans text-[#d6faff]">
-      <h1 className="text-3xl font-bold text-center  bg-[#13272e] text-white py-4 rounded-xl shadow-sm">
-        Нүүр хуудас
-      </h1>
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-8 mt-5">
-        {/* Profile and Stats */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-[#13272e] p-6 rounded-2xl shadow-lg text-center">
-            <img
-              src={
-                user.image ||
-                "/images/487781992_1399606614564756_2379153872326703844_n.jpg"
-              }
-              alt="User"
-              className="w-24 h-24 mx-auto rounded-full border-2 border-[#24ffa5] shadow-lg shadow-[#24ffa5]"
-            />
-            <h2 className="text-xl font-bold mt-4 text-white">{user.name}</h2>
-            <p className="text-[#24ffa5] font-medium capitalize">
-              {user.role === "teacher"
-                ? "Багш"
-                : user.role === "student"
-                ? `Оюутан`
-                : "Админ"}
-            </p>
-            {session?.user?.role === "student" && (
-              <p className="text-gray-400 text-sm mt-1">
-                Курс: {session.user.school_year || "-"}
-              </p>
-            )}
-          </div>
-
-          <div className="bg-[#13272e] p-6 rounded-2xl shadow-lg">
-            <h3 className="font-semibold text-[#d6faff] mb-2 text-center text-lg">
-              Тойм
-            </h3>
-            <div className="grid grid-cols-2 gap-4 text-sm text-[#d6faff]">
-              <div className="bg-[#0f181e] rounded-xl p-4 shadow-inner text-center border border-[#24ffa530]">
-                <p className="text-2xl font-bold text-[#24ffa5]">
-                  {timetableData.length}
-                </p>
-                <p className="text-gray-400">Хичээл</p>
-              </div>
-              <div className="bg-[#0f181e] rounded-xl p-4 shadow-inner text-center border border-[#24ffa530]">
-                <p className="text-2xl font-bold text-[#24ffa5]">
-                  {new Set(timetableData.map((x) => x.weekdays)).size}
-                </p>
-                <p className="text-gray-400">Өдөр</p>
+    <div className="bg-background text-foreground min-h-screen m-0 pl-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+        {/* Зүүн тал → Хичээлийн хуваарь */}
+        <div className="lg:col-span-2 space-y-0 w-[940px]">
+          <div className="bg-card p-6 rounded-2xl space-y-6 shadow">
+            <div className="shadow bg-gradient-to-br from-[#a0bbdf] to-[#c68c8c] dark:from-[#1a2a31] dark:to-[#1a2a31] p-4 rounded-lg">
+              <h2 className="text-2xl font-bold text-black dark:text-white text-center pb-6 pt-2">
+                Хичээлийн хуваарь
+              </h2>
+              <div className="grid grid-cols-[80px_repeat(5,minmax(0,1fr))] gap-2">
+                <div className="space-y-3">
+                  {timeSlots.map((slot) => (
+                    <div
+                      key={slot}
+                      className="w-full h-[80px] flex items-center justify-center text-lg font-semibold text-gray-700 dark:text-white"
+                    >
+                      {slot}
+                    </div>
+                  ))}
+                </div>
+                {weekdays.map((day) => (
+                  <div key={day} className="space-y-3">
+                    {timeSlots.map((slot) => {
+                      const lesson = getLessonForTimeSlot(day, slot);
+                      const hasLesson = lesson !== "-";
+                      return (
+                        <div
+                          key={day + slot}
+                          className={`rounded-lg text-center border border-gray-200 dark:border-[#264144]
+                          ${
+                            hasLesson
+                              ? "bg-white dark:bg-[#0f181e] text-black dark:text-white"
+                              : "bg-gray-200 dark:bg-[#1a2a31] text-gray-500 dark:text-gray-400"
+                          }
+                          w-full h-[80px] flex items-center justify-center text-md`}
+                        >
+                          {hasLesson && <p>{lesson}</p>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          {closestSchedule && (
-            <div className="bg-[#13272e] p-6 rounded-2xl shadow-lg">
-              <h3 className="font-semibold text-[#d6faff] mb-2 text-center text-lg">
-                🗓️ Тун удахгүй болох үйл явдал
-              </h3>
-              <p className="text-[#24ffa5] text-center font-bold text-md">
-                {closestSchedule.event}
-              </p>
-              <p className="text-center text-gray-400 text-sm mt-1">
-                {new Date(closestSchedule.date).toLocaleDateString("mn-MN", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </p>
-            </div>
+          {/* Даалгавар - Student */}
+          {user.role === "student" && assignments.length > 0 && (
+            <details className="bg-gradient-to-br from-[#a0bbdf] to-[#c68c8c] dark:from-[#13272e] dark:to-[#13272e] w-[890px] ml-6 border p-6 rounded-2xl shadow space-y-4">
+              <summary className="cursor-pointer text-lg font-normal text-gray-700 dark:text-white">
+                🎒 Даалгавруудыг харах
+              </summary>
+              <div className="mt-4 space-y-4">
+                {assignments.map((a) => (
+                  <div
+                    key={a.id}
+                    className="bg-gray-50 dark:bg-[#1a2a31] p-4 rounded-lg border border-gray-700 dark:border-[#264144]"
+                  >
+                    <p className="font-semibold text-black dark:text-white">
+                      {a.title}
+                    </p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">
+                      🧑‍🏫 {a.teacher.name}
+                    </p>
+                    {a.fileUrl && (
+                      <a
+                        href={a.fileUrl}
+                        target="_blank"
+                        className="text-[#5584c6] underline"
+                      >
+                        📎 Файл татах
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
+
+          {/* Ирсэн даалгавар - Teacher */}
+          {user.role === "teacher" && submissions.length > 0 && (
+            <details className="w-[890px] ml-6 border p-6 rounded-2xl dark:bg-[#13272e] space-y-4">
+              <summary className="cursor-pointer text-lg font-normal text-gray-700 dark:text-white">
+                Ирсэн даалгавруудыг харах
+              </summary>
+              <div className="mt-4 space-y-4">
+                {submissions.map((s) => (
+                  <div
+                    key={s.id}
+                    className="bg-gray-50 dark:bg-[#1a2a31] p-4 rounded-lg border border-gray-700 dark:border-[#264144]"
+                  >
+                    <p className="text-gray-700 dark:text-white font-bold mb-3">
+                      {s.student.name} → 📝 {s.assignment.title}
+                    </p>
+                    {s.fileUrl && (
+                      <a
+                        href={s.fileUrl}
+                        target="_blank"
+                        className="text-[#5584c6] underline"
+                      >
+                        📎 Файл татах
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </details>
           )}
         </div>
 
-        {/* Schedule */}
-        <div className="lg:col-span-2 bg-[#13272e] p-6 rounded-2xl shadow-xl">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-[#24ffa5]">
-              {user.role === "teacher"
-                ? "Хичээлийн хуваарь (Багш)"
-                : `Хичээлийн хуваарь  ${user.school_year}-5`}
-            </h2>
-            <span className="text-sm text-gray-400">Хичээлүүд</span>
-          </div>
-          {timetableData.length === 0 ? (
-            <p className="text-center text-red-500">Мэдээлэл олдсонгүй</p>
-          ) : (
-            <div className="overflow-x-auto rounded-lg border border-[#24ffa530]">
-              <table className="min-w-full text-sm text-[#d6faff]">
-                <thead className="bg-[#0f181e]">
-                  <tr>
-                    <th className="py-3 px-4 text-left border-b border-[#24ffa530]">
-                      Цаг
-                    </th>
-                    {weekdays.map((day) => (
-                      <th
-                        key={day}
-                        className="py-3 px-4 text-center border-b border-[#24ffa530]"
-                      >
-                        {day}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {timeSlots.map((slot) => (
-                    <tr key={slot} className="even:bg-[#0f181e]">
-                      <td className="py-2 px-4 font-medium border-t border-[#24ffa530] bg-[#0f181e] text-white">
-                        {slot}
-                      </td>
-                      {weekdays.map((day) => (
-                        <td
-                          key={`${day}-${slot}`}
-                          className="py-2 px-4 text-center border-t border-[#24ffa530]"
-                        >
-                          {getLessonForTimeSlot(day, slot)}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        {/* Баруун тал → Profile + Calendar */}
+        <div className="space-y-6 w-full ml-20 lg:w-[360px]">
+          <div className="bg-card dark:bg-[#13272e] border border-gray-200 dark:border-[#264144] p-6 rounded-2xl shadow space-y-4">
+            <div className="flex flex-col justify-center items-center space-y-4">
+              <img
+                src={user.image || "/images/erdenebat.png"}
+                alt="User"
+                className="w-24 h-24 rounded-full border-2 border-[#5584c6]"
+              />
+              <div className="text-center">
+                <h2 className="text-lg font-bold text-gray-700 dark:text-white">
+                  {user.name}
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Статус:{" "}
+                  {user.role === "teacher"
+                    ? "Багш"
+                    : user.role === "student"
+                    ? "Оюутан"
+                    : "Админ"}
+                </p>
+              </div>
             </div>
-          )}
+
+            <Calendar events={[]} />
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default Home;
+}

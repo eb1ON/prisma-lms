@@ -35,7 +35,7 @@ const LessonView = async ({ params }: { params: { lessonId: string } }) => {
   const isTeacher = session.user.role === "teacher";
 
   return (
-    <div className="p-8 min-h-screen w-full space-y-6 bg-[#283131]">
+    <div className="p-8 min-h-screen w-full space-y-6 bg-background text-foreground">
       <div className="relative flex items-center justify-center">
         <div className="absolute left-0">
           <BackButton />
@@ -43,48 +43,58 @@ const LessonView = async ({ params }: { params: { lessonId: string } }) => {
 
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-wide">Хичээлүүд</h1>
-          <div className="w-50 mx-auto mt-4 border-t-2 border-[#65d8ba]"></div>
+          <div className="w-24 mx-auto mt-4 border-t-2 border-primary"></div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
         {lessonsToShow.length > 0 ? (
           lessonsToShow.map((lesson) => (
             <Link
               key={lesson.id}
               href={`/lesson/view/${lesson.lessonCode}/${lesson.id}`}
-              className="group block bg-[#313f40] rounded-xl border border-[#3ef4cb] p-6 hover:shadow-xl transition-all"
+              className="group block bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all h-full"
             >
-              <div className="flex items-center space-x-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white group-hover:text-[#3ef4cb]">
+              <div className="flex flex-col h-full">
+                <div className="flex flex-col items-center text-center space-y-4 flex-grow">
+                  <div className="text-5xl">📚</div>
+
+                  <h3 className="text-xl font-semibold text-foreground">
                     {lesson.title}
                   </h3>
-                  <p className="text-sm text-gray-300 mt-1">
+
+                  <p className="text-sm text-muted-foreground">
                     {lesson.description || "No description available"}
                   </p>
-                  <div className="text-sm text-[#3ef4cb] mt-2">
+
+                  <div className="text-sm text-muted-foreground">
                     {lesson.teacherName && `Багшийн нэр: ${lesson.teacherName}`}
                   </div>
-                  <div className="flex gap-2 mt-2">
+
+                  <div className="flex gap-2 mt-2 flex-wrap justify-center">
                     {lesson.pdfUrl && (
-                      <span className="inline-block text-xs text-[#90cdf4] border border-[#90cdf4] px-2 py-0.5 rounded-full">
+                      <span className="inline-block text-xs text-blue-500 border border-blue-500 px-3 py-0.5 rounded-full">
                         📄 PDF хавсралттай
                       </span>
                     )}
                     {lesson.videoUrl && (
-                      <span className="inline-block text-xs text-[#68d391] border border-[#68d391] px-2 py-0.5 rounded-full">
+                      <span className="inline-block text-xs text-green-500 border border-green-500 px-3 py-0.5 rounded-full">
                         🎬 Видео хавсралттай
                       </span>
                     )}
                   </div>
                 </div>
-                <div className="text-[#3ef4cb] text-xl">→</div>
+
+                <div className="mt-4 flex justify-center">
+                  <span className="inline-block px-4 py-1 text-primary border border-primary rounded-full font-medium group-hover:bg-primary group-hover:text-primary-foreground transition">
+                    Үзэх →
+                  </span>
+                </div>
               </div>
             </Link>
           ))
         ) : (
-          <p className="text-center text-gray-400 col-span-full">
+          <p className="text-center text-muted-foreground col-span-full">
             Хичээл олдоогүй.
           </p>
         )}
@@ -94,9 +104,9 @@ const LessonView = async ({ params }: { params: { lessonId: string } }) => {
         <div className="mt-10 text-center">
           <Link
             href={`/lesson/view/add/${addLesson?.lesson_code}`}
-            className="inline-block bg-[#3ef4cb] hover:bg-[#2dc2bd] text-black font-semibold px-6 py-3 rounded-xl transition"
+            className="inline-block bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-xl transition"
           >
-            ➕ Хичээл нэмэх
+            Хичээл нэмэх
           </Link>
         </div>
       )}

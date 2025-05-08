@@ -64,69 +64,67 @@ export default function UploadLessonClient({
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 bg-[#313f40] border border-[#3ef4cb] rounded-xl p-8 text-white shadow-xl">
-      <h1 className="text-2xl font-bold text-center mb-6 text-[#3ef4cb]">
-        Хичээл нэмэх
-      </h1>
+    <div className="max-w-2xl mx-auto mt-10 bg-card border border-border rounded-xl p-8 text-foreground shadow-xl">
+      <h1 className="text-2xl font-bold text-center mb-6">Хичээл нэмэх</h1>
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           placeholder="Хичээлийн нэр"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-3 rounded-md bg-[#243b4a] text-white border border-[#3ef4cb] focus:outline-none focus:ring-2 focus:ring-[#3ef4cb]"
+          className="w-full p-3 rounded-md bg-background text-foreground border border-border focus:outline-none focus:ring-2 focus:ring-primary"
           required
         />
         <textarea
           placeholder="Тайлбар"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-3 rounded-md bg-[#243b4a] text-white border border-[#3ef4cb] focus:outline-none focus:ring-2 focus:ring-[#3ef4cb]"
+          className="w-full p-3 rounded-md bg-background text-foreground border border-border focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <input
           type="number"
           placeholder="Курс"
           value={schoolYear ?? ""}
           onChange={(e) => setSchoolYear(Number(e.target.value))}
-          className="w-full p-3 rounded-md bg-[#243b4a] text-white border border-[#3ef4cb] focus:outline-none focus:ring-2 focus:ring-[#3ef4cb]"
+          className="w-full p-3 rounded-md bg-background text-foreground border border-border focus:outline-none focus:ring-2 focus:ring-primary"
         />
         <div>
-          <label className="block mb-1">PDF хавсралт</label>
+          <label className="block mb-1 text-foreground">PDF хавсралт</label>
           <input
             type="file"
             accept="application/pdf"
             onChange={handlePdfChange}
-            className="w-full text-sm"
+            className="w-full text-sm text-foreground"
           />
           {previewPdf && (
             <embed
               src={previewPdf}
               type="application/pdf"
-              className="mt-2 w-full h-48 rounded border border-[#3ef4cb]"
+              className="mt-2 w-full h-48 rounded border border-border"
             />
           )}
         </div>
         <div>
-          <label className="block mb-1">Видео хавсралт</label>
+          <label className="block mb-1 text-foreground">Видео хавсралт</label>
           <input
             type="file"
             accept="video/*"
             onChange={handleVideoChange}
-            className="w-full text-sm"
+            className="w-full text-sm text-foreground"
           />
           {previewVideo && (
             <video
               src={previewVideo}
               controls
-              className="mt-2 w-full h-48 rounded border border-[#3ef4cb]"
+              className="mt-2 w-full h-48 rounded border border-border"
             />
           )}
         </div>
         <button
           type="submit"
-          className="w-full py-3 mt-4 bg-[#3ef4cb] hover:bg-[#2dc2bd] text-black font-semibold rounded-lg transition"
+          className="w-full py-3 mt-4 bg-primary text-primary-foreground font-semibold rounded-lg transition"
         >
-          ➕ Хичээл нэмэх
+          Хичээл нэмэх
         </button>
       </form>
     </div>

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import db from "@/lib/db"; // Prisma client
+import db from "@/lib/db";
 
 // GET: Хичээлийн хуваарийг авах
 export async function GET(request: Request) {
@@ -42,7 +42,28 @@ export async function POST(request: Request) {
       school_year,
     } = body;
 
-    // Хичээлийн хуваарь нэмэх
+    // Давхцал шалгах (Өдөр + Курс + Цагийн overlap шалгах)
+    const conflicts = await db.timetable.findMany({
+      where: {
+        weekdays,
+        school_year,
+        AND: [
+          { start_time: { lt: end_time } }, // Эхлэх цаг нь шинэ дуусах цагаас өмнө
+          { end_time: { gt: start_time } }, // Дуусах цаг нь шинэ эхлэх цагаас хойш
+        ],
+      },
+    });
+
+    if (conflicts.length > 0) {
+      return NextResponse.json(
+        {
+          error:
+            "Тухайн өдөр, тухайн цагт энэ анги хичээлтэй байгаа учраас нэмэх боломжгүй.",
+        },
+        { status: 400 }
+      );
+    }
+
     const timetable = await db.timetable.create({
       data: {
         lesson_code,
@@ -78,7 +99,29 @@ export async function PUT(request: Request) {
       school_year,
     } = body;
 
-    // Хичээлийн хуваарь засах
+    // Давхцал шалгах (Өдөр + Курс + Цагийн overlap шалгах, өөрийгөө оруулахгүй)
+    const conflicts = await db.timetable.findMany({
+      where: {
+        weekdays,
+        school_year,
+        NOT: { id },
+        AND: [
+          { start_time: { lt: end_time } }, // Эхлэх цаг нь шинэ дуусах цагаас өмнө
+          { end_time: { gt: start_time } }, // Дуусах цаг нь шинэ эхлэх цагаас хойш
+        ],
+      },
+    });
+
+    if (conflicts.length > 0) {
+      return NextResponse.json(
+        {
+          error:
+            "Тухайн өдөр, тухайн цагт энэ курст хичээл аль хэдийн орж байгаа тул засах боломжгүй.",
+        },
+        { status: 400 }
+      );
+    }
+
     const timetable = await db.timetable.update({
       where: { id },
       data: {
@@ -109,12 +152,11 @@ export async function DELETE(request: Request) {
 
     if (!id) {
       return NextResponse.json(
-        { error: "ID is required to delete the timetable" },
+        { error: "ID is required to delete timetable" },
         { status: 400 }
       );
     }
 
-    // Хичээлийн хуваарь устгах
     const timetable = await db.timetable.delete({
       where: { id: Number(id) },
     });

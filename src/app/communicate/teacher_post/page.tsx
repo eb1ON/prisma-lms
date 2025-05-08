@@ -1,15 +1,13 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
-import Link from "next/link";
 
 export default async function PostPage({
   searchParams,
 }: {
   searchParams: { year?: string };
 }) {
-  const { year } = await searchParams;
+  const { year } = searchParams;
 
   const session = await auth();
   if (!session || !session.user) {
@@ -34,163 +32,92 @@ export default async function PostPage({
     },
   });
 
-  const selectedButton =
-    currentUser.role === "teacher"
-      ? "/communicate/teacher_post"
-      : "/communicate/student_post";
-
   return (
-    <div className="flex flex-col mt-3 mb-3 w-full h-screen bg-[#1e2627] overflow-y-hidden">
-      {/* Navigation */}
-      <div className="flex w-full bg-[#313f40] shadow-sm shadow-[#6be4b9] mb-1 rounded-sm">
-        <button className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black">
-          <a href={selectedButton}>Нийтлэл</a>
-        </button>
-        <button className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black">
-          <a href="/communicate/1">Мессеж</a>
-        </button>
-      </div>
+    <div className="flex flex-col w-full h-screen bg-background overflow-hidden text-foreground">
+      <div className="flex w-full h-full">
+        {/* Post Section */}
+        <div className="w-9/12 flex flex-col bg-background p-4">
+          {/* User Info */}
+          <div className="bg-gradient-to-br from-[#a0bbdf] from-40% to-[#c68c8c] shadow-xl rounded-md p-4 mb-4 flex items-center space-x-5">
+            <img
+              src="https://png.pngtree.com/png-vector/20220210/ourmid/pngtree-avatar-bussinesman-man-profile-icon-vector-illustration-png-image_4384273.png"
+              className="w-14 h-14 rounded-full border border-primary shadow"
+            />
+            <h2 className="text-xl font-bold text-white">{currentUser.name}</h2>
+          </div>
 
-      {/* User Info */}
-      <div className="flex justify-start space-x-3 items-center px-8 mb-4 mt-4">
-        <img
-          src="https://png.pngtree.com/png-vector/20220210/ourmid/pngtree-avatar-bussinesman-man-profile-icon-vector-illustration-png-image_4384273.png"
-          alt="User Profile"
-          className="w-10 h-10 rounded-full border border-purple-500 shadow-md"
-        />
-        <div>
-          <h1 className="text-xl font-semibold text-[#6be4b9]">
-            {currentUser.name}
-          </h1>
-          <p className="text-sm text-gray-300">
-            {currentUser.role === "teacher" ? "Багш" : "Оюутан"}
-          </p>
+          {/* Posts */}
+          <div className="flex-1 overflow-y-auto space-y-4 p-2">
+            {posts.length === 0 ? (
+              <p className="text-muted-foreground text-center pt-10">
+                Одоогоор пост алга байна.
+              </p>
+            ) : (
+              posts.map((post, index) => (
+                <div
+                  key={index}
+                  className="bg-card border border-border p-4 rounded-lg shadow"
+                >
+                  <h3 className="font-semibold text-primary text-lg">
+                    📌 {post.title}
+                  </h3>
+                  <p className="text-foreground mt-2">{post.body}</p>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Post Form */}
+          <form
+            action="/api/post"
+            method="POST"
+            className="sticky bottom-0 bg-card rounded-lg shadow mt-4 p-4 space-x-4 flex"
+          >
+            <input type="hidden" name="school_year" value={selectedYear} />
+            <input
+              type="text"
+              name="title"
+              placeholder="Нийтлэлийн гарчиг"
+              className="flex-1 p-3 border border-border rounded bg-background text-foreground focus:outline-none"
+              required
+            />
+            <textarea
+              name="body"
+              placeholder="Нийтлэлийн агуулга..."
+              className="flex-1 p-3 border border-border rounded bg-background text-foreground focus:outline-none"
+              required
+            />
+            <button
+              type="submit"
+              className="px-6 py-3 bg-primary text-primary-foreground font-semibold rounded"
+            >
+              Нийтлэх
+            </button>
+          </form>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="flex w-full h-full rounded-sm shadow-xl shadow-[#6be4b9]">
-        {/* Sidebar */}
-        <div className="w-2/12 bg-[#313f40] shadow-md shadow-r shadow-[#6be4b9] pt-10">
-          <ul className="space-y-2">
-            {schoolYears.map((year) => (
-              <li key={year}>
+        {/* Sidebar (Years) */}
+        <div className="w-3/12 bg-card p-6 pt-20 space-y-4 text-center shadow-xl rounded-l-lg border-l border-border">
+          <h2 className="text-2xl font-bold text-primary">📚 Нийтлэл</h2>
+          <h2 className="text-md font-normal text-muted-foreground mb-20">
+            Нийтлэл бичих ангиа сонгоно уу
+          </h2>
+          <ul className="space-y-3">
+            {schoolYears.map((y) => (
+              <li key={y} className="mt-10">
                 <a
-                  href={`/communicate/teacher_post?year=${year}`}
-                  className={`text-lg p-3 rounded flex justify-center font-medium ${
-                    selectedYear === year
-                      ? "bg-[#6be4b9] text-black"
-                      : "text-gray-300 hover:bg-[#6be4b9] hover:text-black"
+                  href={`/communicate/teacher_post?year=${y}`}
+                  className={`block text-center py-5 font-medium rounded-2xl transition ${
+                    selectedYear === y
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                 >
-                  МКТК {year}-5 анги
+                  МКТК {y}-р курс
                 </a>
               </li>
             ))}
           </ul>
-        </div>
-
-        {/* Posts + Form */}
-        <div className="w-10/12 h-full justify-center flex flex-col p-5">
-          {/* Scrollable post list */}
-          <div
-            id="post-list"
-            className="flex-1 items-center justify-center overflow-y-auto pr-2"
-          >
-            {selectedYear > 0 && (
-              <>
-                {posts.length === 0 ? (
-                  <p className="text-gray-400 ">Одоогоор пост алга байна.</p>
-                ) : (
-                  posts.map((post, index) => (
-                    <div
-                      key={index}
-                      className="mb-4 flex flex-col justify-center ml-56 items-center w-2/4 p-4 shadow-[#6be4b9] bg-[#313f40] rounded-md shadow-md"
-                    >
-                      <h3 className="text-lg font-semibold text-white">
-                        Нийтлэлийн гарчиг: {post.title}
-                      </h3>
-                      <p className="text-gray-300">
-                        Нийтлэлийн агуулга: {post.body}
-                      </p>
-                    </div>
-                  ))
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Form - always visible */}
-          {selectedYear > 0 && (
-            <form
-              id="post-form"
-              action="/api/post"
-              method="POST"
-              className="sticky bottom-0 mt-3 space-y-3 p-1 rounded-md"
-            >
-              <div className="flex flex-row">
-                <input type="hidden" name="school_year" value={selectedYear} />
-                <input
-                  type="text"
-                  name="title"
-                  placeholder="Нийтлэлийн гарчиг"
-                  className="w-4/12 h-10 p-2 mr-2 rounded border border-[#6be4b9] bg-[#1e2627] text-white"
-                  required
-                />
-                <textarea
-                  name="body"
-                  placeholder="Нийтлэлийн агуулга..."
-                  className="w-7/12 h-10 p-2 mr-3 rounded border border-[#6be4b9] bg-[#1e2627] text-white"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="px-1 w-1/12 p-2 h-10 py-2 bg-[#6be4b9] text-[#1e2627] font-semibold rounded"
-                >
-                  Нийтлэх
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* ✅ Refresh хийхгүйгээр fetch илгээдэг скрипт */}
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-              document.addEventListener("DOMContentLoaded", function () {
-                const form = document.getElementById("post-form");
-                if (!form) return;
- 
-                form.addEventListener("submit", function (e) {
-                  e.preventDefault();
-                  const formData = new FormData(form);
- 
-                  fetch("/api/post", {
-                    method: "POST",
-                    body: formData,
-                  })
-                  .then((res) => res.json())
-                  .then((data) => {
-                    if (data?.error) {
-                      alert("Алдаа: " + data.error);
-                      return;
-                    }
- 
-                    const container = document.getElementById("post-list");
-                    const postDiv = document.createElement("div");
-                    postDiv.className = "mb-4 flex flex-col justify-center ml-56 items-center w-2/4 p-4 shadow-[#6be4b9] bg-[#313f40] rounded-md shadow-md";
-                    postDiv.innerHTML = \`
-                      <h3 class=\\"text-lg font-semibold text-white\\">Нийтлэлийн гарчиг: \${data.title}</h3>
-                      <p class=\\"text-gray-300\\">Нийтлэлийн агуулга: \${data.body}</p>
-                    \`;
-                    container.prepend(postDiv);
-                    form.reset();
-                  });
-                });
-              });
-            `,
-            }}
-          />
         </div>
       </div>
     </div>

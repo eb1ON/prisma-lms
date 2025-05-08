@@ -1,7 +1,7 @@
 import BackButton from "@/components/BackButton";
 import { auth } from "@/lib/auth";
 import { PrismaClient } from "@prisma/client";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 const prisma = new PrismaClient();
 
@@ -12,6 +12,8 @@ const LessonDetailView = async ({
 }) => {
   const { lessonView } = await params;
   const session = await auth();
+  if (!session) redirect("/sign-in");
+
   const parsedLessonId = parseInt(lessonView, 10);
   const lesson = await prisma.lesson.findUnique({
     where: { id: parsedLessonId },
@@ -20,7 +22,7 @@ const LessonDetailView = async ({
   if (!lesson) return notFound();
 
   return (
-    <div className="p-6 md:p-10 min-h-screen bg-[#283131] text-white">
+    <div className="p-6 md:p-10 min-h-screen bg-background text-foreground">
       <div className="relative flex items-center justify-center">
         <div className="absolute left-0">
           <BackButton />
@@ -28,22 +30,25 @@ const LessonDetailView = async ({
 
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-wide">{lesson.title}</h1>
-          <div className="w-50 mx-auto mt-4 border-t-2 border-[#65d8ba]"></div>
+          <div className="w-50 mx-auto mt-4 border-t-2 border-primary"></div>
         </div>
       </div>
-      <div className="mt-10 max-w-4xl mx-auto space-y-6 bg-[#313f40] border border-[#3ef4cb] rounded-2xl p-8 shadow-xl">
+
+      <div className="mt-10 max-w-4xl mx-auto space-y-6 bg-card rounded-2xl p-8 shadow-xl border border-border">
         {lesson.description && (
-          <p className="text-gray-300 text-center">{lesson.description}</p>
+          <p className="text-foreground text-center">{lesson.description}</p>
         )}
 
         {lesson.videoUrl ? (
           <video
             controls
             src={lesson.videoUrl}
-            className="w-full rounded-lg border border-[#68d391] shadow-md"
+            className="w-full rounded-lg border border-border shadow-md"
           />
         ) : (
-          <p className="text-red-400 text-center">🎬 Видео байхгүй</p>
+          <p className="text-red-500 dark:text-red-400 text-center">
+            🎬 Видео байхгүй
+          </p>
         )}
 
         {lesson.pdfUrl ? (
@@ -53,11 +58,13 @@ const LessonDetailView = async ({
               type="application/pdf"
               width="100%"
               height="600px"
-              className="rounded-md border border-[#90cdf4] shadow"
+              className="rounded-md border border-border shadow"
             />
           </div>
         ) : (
-          <p className="text-red-400 text-center">📄 PDF файл байхгүй</p>
+          <p className="text-red-500 dark:text-red-400 text-center">
+            📄 PDF файл байхгүй
+          </p>
         )}
       </div>
     </div>

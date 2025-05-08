@@ -4,29 +4,19 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LessonList } from "@/types/lesson";
-
-type LessonModalProps = {
-  lesson: LessonList;
-  setLesson: React.Dispatch<React.SetStateAction<LessonList>>;
-  onSave: () => void;
-  onCancel: () => void;
-  isEditing: boolean;
-};
 
 const LessonsPage = () => {
   const router = useRouter();
-  const [lessons, setLessons] = useState<LessonList[]>([]);
-  const [filteredLessons, setFilteredLessons] = useState<LessonList[]>([]);
-  const [newLesson, setNewLesson] = useState<LessonList>({
-    id: "",
+  const [lessons, setLessons] = useState<any[]>([]);
+  const [filteredLessons, setFilteredLessons] = useState<any[]>([]);
+  const [newLesson, setNewLesson] = useState({
     lesson_code: "",
     lesson_name: "",
     credits: 1,
     description: "",
     teacher_id: "",
   });
-  const [editLesson, setEditLesson] = useState<LessonList | null>(null);
+  const [editLesson, setEditLesson] = useState<any | null>(null);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -58,7 +48,7 @@ const LessonsPage = () => {
     const payload = {
       ...newLesson,
       teacher_id:
-        newLesson.teacher_id?.trim() === "" ? null : newLesson.teacher_id,
+        newLesson.teacher_id.trim() === "" ? null : newLesson.teacher_id,
     };
     const res = await fetch("/api/lessons", {
       method: "POST",
@@ -68,7 +58,6 @@ const LessonsPage = () => {
     const data = await res.json();
     setLessons((prev) => [...prev, data]);
     setNewLesson({
-      id: "",
       lesson_code: "",
       lesson_name: "",
       credits: 1,
@@ -79,7 +68,7 @@ const LessonsPage = () => {
   };
 
   const handleEditLesson = async () => {
-    if (!editLesson?.lesson_code || !editLesson.lesson_name) {
+    if (!editLesson.lesson_code || !editLesson.lesson_name) {
       alert("Бүх заавал талбарыг бөглөнө үү!");
       return;
     }
@@ -105,41 +94,45 @@ const LessonsPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#0f181e] py-10 px-6 text-[#e3fef3] font-sans">
+    <div className="fixed inset-0 overflow-y-auto bg-white py-10 px-6 text-[#e9ebee] font-sans">
       <div className="w-full max-w-6xl mx-auto space-y-12">
+        {/* Header */}
         <div className="flex justify-between items-center gap-4">
           <Button
             variant="outline"
             onClick={() => router.back()}
-            className="text-[#0f181e] border-[#6be4b9] hover:bg-[#13272e] active:bg-[#6be4b9] active:text-[#0f181e]"
+            className="text-gray-800 bg-[#e9ebee] border shadow-sm hover:bg-[#5584c6] active:bg-[#5584c6]/50 active:text-gray-800"
           >
             ← Буцах
           </Button>
-          <h1 className="text-3xl font-bold text-white text-center w-full border-b border-[#6be4b9] pb-4 mb-6">
+          <h1 className="text-3xl font-bold text-black text-center w-full border-b border-[#5584c6] pb-4 mb-6">
             📘 Хичээлийн жагсаалт
           </h1>
           <div className="w-24" />
         </div>
 
+        {/* Search */}
         <Input
           placeholder="Хичээлийн нэр эсвэл кодоор хайх..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920]"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920]"
         />
 
+        {/* Add New Button */}
         <div className="text-center">
           <Button
             onClick={() => setIsAddOpen(true)}
-            className="bg-[#6be4b9] hover:bg-[#53dab0] text-[#0f181e] font-semibold px-6 py-2 rounded-lg"
+            className="bg-[#e9ebee] hover:bg-[#5584c6] text-gray-800 font-semibold px-6 py-2 rounded-lg"
           >
             ➕ Шинэ хичээл нэмэх
           </Button>
         </div>
 
-        <div className="bg-[#13272e] p-6 rounded-xl shadow-2xl max-h-[500px] overflow-y-auto">
+        {/* Lessons Table */}
+        <div className="bg-white border p-6 rounded-xl shadow-2xl max-h-[500px] overflow-y-auto">
           <table className="w-full text-sm divide-y divide-[#6be4b920]">
-            <thead className="bg-[#6be4b9] text-[#0f181e]">
+            <thead className="bg-[#e9ebee] text-gray-800">
               <tr>
                 <th className="py-3 px-4 text-left">Код</th>
                 <th className="py-3 px-4 text-left">Нэр</th>
@@ -152,9 +145,9 @@ const LessonsPage = () => {
               {filteredLessons.map((lesson) => (
                 <tr
                   key={lesson.id}
-                  className="hover:bg-[#0f181e] transition duration-200"
+                  className="transition duration-200 text-gray-800"
                 >
-                  <td className="px-4 py-2 text-[#6be4b9] font-semibold">
+                  <td className="px-4 py-2 text-black font-semibold">
                     {lesson.lesson_code}
                   </td>
                   <td className="px-4 py-2">{lesson.lesson_name}</td>
@@ -163,7 +156,7 @@ const LessonsPage = () => {
                   <td className="px-4 py-2 text-center space-x-2">
                     <Button
                       size="sm"
-                      className="bg-[#6be4b9] text-[#0f181e] font-semibold"
+                      className="bg-[#e9ebee] text-gray-800 hover:bg-[#5584c6] border shadow-md"
                       onClick={() => setEditLesson(lesson)}
                     >
                       Засах
@@ -171,7 +164,7 @@ const LessonsPage = () => {
                     <Button
                       size="sm"
                       variant="destructive"
-                      className="text-white"
+                      className="text-gray-800 bg-[#e9ebee] border hover:bg-red-500 shadow-md"
                       onClick={() => handleDeleteLesson(lesson.id)}
                     >
                       Устгах
@@ -183,6 +176,7 @@ const LessonsPage = () => {
           </table>
         </div>
 
+        {/* Modals */}
         {isAddOpen && (
           <LessonModal
             lesson={newLesson}
@@ -206,6 +200,14 @@ const LessonsPage = () => {
   );
 };
 
+type LessonModalProps = {
+  lesson: any;
+  setLesson: any;
+  onSave: () => void;
+  onCancel: () => void;
+  isEditing: boolean;
+};
+
 const LessonModal = ({
   lesson,
   setLesson,
@@ -213,9 +215,9 @@ const LessonModal = ({
   onCancel,
   isEditing,
 }: LessonModalProps) => (
-  <div className="bg-[#13272e]/90 fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div className="bg-[#0f181e] p-6 rounded-xl shadow-lg w-full max-w-2xl space-y-4 overflow-y-auto max-h-[90vh]">
-      <h2 className="text-2xl font-bold text-center text-[#6be4b9] mb-6">
+  <div className="bg-white/70 fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="bg-white border shadow-2xl p-6 rounded-xl w-full max-w-2xl space-y-4 overflow-y-auto over max-h-[90vh]">
+      <h2 className="text-2xl font-bold text-center text-black mb-6">
         {isEditing ? "✏️ Хичээл засах" : "➕ Шинэ хичээл нэмэх"}
       </h2>
       <div className="grid md:grid-cols-2 gap-4">
@@ -225,7 +227,7 @@ const LessonModal = ({
             setLesson({ ...lesson, lesson_code: e.target.value })
           }
           placeholder="Хичээлийн код"
-          className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg"
         />
         <Input
           value={lesson.lesson_name}
@@ -233,14 +235,14 @@ const LessonModal = ({
             setLesson({ ...lesson, lesson_name: e.target.value })
           }
           placeholder="Хичээлийн нэр"
-          className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg"
         />
         <select
           value={lesson.credits}
           onChange={(e) =>
             setLesson({ ...lesson, credits: parseInt(e.target.value) })
           }
-          className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg px-3 py-2"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg px-3 py-2"
         >
           {[1, 2, 3, 4, 5].map((credit) => (
             <option key={credit} value={credit}>
@@ -252,7 +254,7 @@ const LessonModal = ({
           value={lesson.teacher_id ?? ""}
           onChange={(e) => setLesson({ ...lesson, teacher_id: e.target.value })}
           placeholder="Багшийн ID (заавал биш)"
-          className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg"
         />
         <div className="md:col-span-2">
           <Input
@@ -261,21 +263,21 @@ const LessonModal = ({
               setLesson({ ...lesson, description: e.target.value })
             }
             placeholder="Тайлбар"
-            className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
+            className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg"
           />
         </div>
       </div>
       <div className="flex gap-4 pt-4">
         <Button
           onClick={onSave}
-          className="w-full bg-[#6be4b9] text-[#0f181e] font-semibold"
+          className="w-full bg-[#e9ebee] border border-[#5584c6] text-gray-800 hover:bg-[#5584c6] font-semibold"
         >
           Хадгалах
         </Button>
         <Button
           onClick={onCancel}
           variant="outline"
-          className="w-full border-[#6be4b9] text-[#6be4b9]"
+          className="w-full bg-[#e9ebee] text-gray-800 hover:bg-red-500"
         >
           Болих
         </Button>

@@ -44,7 +44,7 @@ const UserSchedulePage = () => {
   const getDaysInMonth = (month: number, year: number) =>
     new Date(year, month, 0).getDate();
   const getFirstWeekDay = (month: number, year: number) =>
-    (new Date(year, month - 1, 1).getDay() + 6) % 7; // make Monday start (0=Mon)
+    (new Date(year, month - 1, 1).getDay() + 6) % 7;
 
   const isEventDay = (day: number, month: number, year: number) =>
     schedules.some((s) => {
@@ -74,7 +74,9 @@ const UserSchedulePage = () => {
 
   const renderCalendarBlock = (year: number, months: number[]) => (
     <div key={year} className="mb-12">
-      <h2 className="text-2xl font-bold text-[#6be4b9] mb-6">📆 {year} он</h2>
+      <h2 className="text-2xl font-bold text-gray-700 dark:text-white mb-6">
+        📆 {year} он
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {months.map((month) => {
           const days = getDaysInMonth(month, year);
@@ -83,16 +85,16 @@ const UserSchedulePage = () => {
           return (
             <div
               key={`${year}-${month}`}
-              className="bg-[#13272e] rounded-xl p-4 shadow border border-[#6be4b920]"
+              className="bg-gray-100 dark:bg-[#13272e] rounded-xl p-4 shadow border border-[#6be4b920] dark:border-[#264144]"
             >
               <button
                 onClick={() => setSelectedMonth({ year, month })}
-                className="block w-full text-lg font-bold text-center text-[#6be4b9] mb-4 hover:underline"
+                className="block w-full text-lg font-bold text-center text-[#5584c6] dark:text-[#6be4b9] mb-4 hover:underline"
               >
                 {monthNames[month - 1]}
               </button>
 
-              <div className="grid grid-cols-7 gap-1 text-sm mb-1 text-center text-gray-400">
+              <div className="grid grid-cols-7 gap-1 text-sm mb-1 text-center text-gray-700 dark:text-gray-400">
                 {weekDays.map((day) => (
                   <div key={day} className="font-medium">
                     {day}
@@ -117,8 +119,8 @@ const UserSchedulePage = () => {
                       }}
                       className={`w-8 h-8 rounded-full flex items-center justify-center transition ${
                         hasEvent
-                          ? "bg-[#6be4b9] text-[#0f181e] font-bold hover:bg-[#4ec99f]"
-                          : "text-gray-500 hover:text-white"
+                          ? "bg-gray-300 dark:bg-[#264144] text-gray-700 dark:text-white font-bold hover:bg-[#5584c6] dark:hover:bg-[#6be4b9]"
+                          : "text-gray-700 dark:text-gray-400 hover:text-[#5584c6] dark:hover:text-[#6be4b9]"
                       }`}
                     >
                       {day}
@@ -134,8 +136,8 @@ const UserSchedulePage = () => {
   );
 
   return (
-    <div className="bg-[#0f181e] min-h-screen py-10 px-4 md:px-10 text-[#d6faff] font-sans">
-      <h1 className="text-3xl font-bold text-center bg-[#13272e] text-white py-4 rounded-xl shadow mb-8">
+    <div className="bg-white dark:bg-[#0f181e] min-h-screen py-10 px-4 md:px-10 text-[#d6faff] font-sans">
+      <h1 className="text-3xl font-bold text-center text-black dark:text-white mb-8">
         📅 Жилийн хуанли
       </h1>
 
@@ -145,20 +147,20 @@ const UserSchedulePage = () => {
       {/* Day Modal */}
       {selectedDay && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-[#13272e] p-6 rounded-xl shadow-lg max-w-md w-full">
-            <h3 className="text-2xl font-bold text-[#6be4b9] mb-4">
+          <div className="bg-white dark:bg-[#13272e] border p-6 rounded-xl shadow-md max-w-md w-full">
+            <h3 className="text-2xl font-bold text-[#5584c6] dark:text-[#6be4b9] mb-4">
               📌 Үйл ажиллагаа
             </h3>
-            <p className="mb-2">
+            <p className="mb-2 text-gray-700 dark:text-gray-300">
               <strong>Огноо:</strong>{" "}
               {new Date(selectedDay.date).toLocaleDateString("mn-MN")}
             </p>
-            <p className="mb-6">
+            <p className="mb-6 text-gray-700 dark:text-gray-300">
               <strong>Үйл явдал:</strong> {selectedDay.event}
             </p>
             <button
               onClick={() => setSelectedDay(null)}
-              className="w-full bg-[#6be4b9] text-[#0f181e] font-semibold py-2 rounded hover:bg-[#4ec99f]"
+              className="w-full bg-[#e9ebee] dark:bg-[#264144] text-gray-700 dark:text-gray-200 font-semibold py-2 rounded hover:bg-[#5584c6] dark:hover:bg-[#6be4b9]"
             >
               Хаах
             </button>
@@ -169,8 +171,8 @@ const UserSchedulePage = () => {
       {/* Full Month Modal */}
       {selectedMonth && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-[#13272e] p-6 rounded-xl shadow-lg max-w-xl w-full">
-            <h3 className="text-2xl font-bold text-[#6be4b9] mb-4">
+          <div className="bg-white dark:bg-[#13272e] p-6 rounded-xl shadow-md max-w-xl w-full">
+            <h3 className="text-2xl font-bold text-[#5584c6] dark:text-[#6be4b9] mb-4">
               📆 {monthNames[selectedMonth.month - 1]} {selectedMonth.year} -
               Үйл явдлууд
             </h3>
@@ -181,10 +183,12 @@ const UserSchedulePage = () => {
                   (ev) => (
                     <li
                       key={ev.id}
-                      className="bg-[#0f181e] p-3 rounded-lg border border-[#6be4b950]"
+                      className="bg-gray-100 dark:bg-[#1a2a31] p-3 rounded-lg shadow-md border dark:border-[#264144]"
                     >
-                      <p className="text-[#6be4b9] font-medium">{ev.event}</p>
-                      <p className="text-gray-400 text-xs">
+                      <p className="text-gray-700 dark:text-white font-medium">
+                        {ev.event}
+                      </p>
+                      <p className="text-gray-400 dark:text-gray-500 text-xs">
                         {new Date(ev.date).toLocaleDateString("mn-MN")}
                       </p>
                     </li>
@@ -192,13 +196,13 @@ const UserSchedulePage = () => {
                 )}
               </ul>
             ) : (
-              <p className="italic text-gray-400 text-center">
+              <p className="italic text-gray-400 dark:text-gray-500 text-center">
                 Энэ сард үйл явдал байхгүй.
               </p>
             )}
             <button
               onClick={() => setSelectedMonth(null)}
-              className="w-full mt-4 bg-[#6be4b9] text-[#0f181e] font-semibold py-2 rounded hover:bg-[#4ec99f]"
+              className="w-full mt-4 bg-[#e9ebee] dark:bg-[#264144] text-gray-700 dark:text-gray-200 font-semibold py-2 rounded hover:bg-[#5584c6] dark:hover:bg-[#6be4b9]"
             >
               Хаах
             </button>

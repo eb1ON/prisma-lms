@@ -114,19 +114,19 @@ const AdminSchedulePage = () => {
     .filter((group) => group.schedules.length > 0);
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#0f181e] text-white py-10 px-6">
+    <div className="fixed inset-0 overflow-y-auto bg-white text-white py-10 px-6">
       <div className="w-full max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-10 gap-4">
           <Button
             variant="outline"
             onClick={() => router.back()}
-            className="text-[#0f181e] border-[#6be4b9] hover:bg-[#13272e] active:bg-[#6be4b9] active:text-[#0f181e]"
+            className="text-gray-800 bg-[#e9ebee] border shadow-sm hover:bg-[#5584c6] active:bg-[#5584c6]/50 active:text-gray-800"
           >
             ← Буцах
           </Button>
-          <h1 className="text-3xl font-bold text-white text-center w-full border-b border-[#6be4b9] pb-4 mb-6">
-            📅 Админ хуваарь удирдлага
+          <h1 className="text-3xl font-bold text-black text-center w-full border-b border-[#5584c6] pb-4 mb-6">
+            📅 Хуанли удирдлага
           </h1>
           <div className="w-24" />
         </div>
@@ -136,14 +136,14 @@ const AdminSchedulePage = () => {
           placeholder="Хуваарийн нэрээр хайх..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="bg-[#0f181e] text-white border border-[#6be4b920] mb-8"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] mb-8"
         />
 
         {/* Add Button */}
         <div className="text-center mb-8">
           <Button
             onClick={() => setIsAddOpen(true)}
-            className="bg-[#6be4b9] hover:bg-[#53dab0] text-[#0f181e] font-semibold px-6 py-2 rounded-lg"
+            className="bg-[#e9ebee] hover:bg-[#5584c6] text-gray-800 font-semibold px-6 py-2 rounded-lg"
           >
             ➕ Шинэ хуваарь нэмэх
           </Button>
@@ -160,10 +160,10 @@ const AdminSchedulePage = () => {
                 {group.schedules.map((s) => (
                   <li
                     key={s.id}
-                    className="flex justify-between items-center bg-[#13272e] p-4 rounded-lg border border-[#6be4b920] hover:shadow-lg"
+                    className="flex justify-between items-center bg-[#e9ebee] p-4 rounded-lg border hover:shadow-lg"
                   >
                     <div>
-                      <p className="font-semibold text-white">{s.event}</p>
+                      <p className="font-semibold text-gray-800">{s.event}</p>
                       <p className="text-sm text-gray-400">
                         {new Date(s.date).toLocaleDateString()}
                       </p>
@@ -171,7 +171,7 @@ const AdminSchedulePage = () => {
                     <div className="flex gap-2">
                       <Button
                         size="sm"
-                        className="bg-[#6be4b9] text-[#0f181e]"
+                        className="bg-[#e9ebee] text-gray-800 hover:bg-[#5584c6] border shadow-md"
                         onClick={() => setEditSchedule(s)}
                       >
                         Засах
@@ -179,6 +179,7 @@ const AdminSchedulePage = () => {
                       <Button
                         size="sm"
                         variant="destructive"
+                        className="bg-[#e9ebee] text-gray-800 border hover:bg-red-500 shadow-md"
                         onClick={() => handleDelete(s.id)}
                       >
                         Устгах
@@ -232,9 +233,9 @@ const ScheduleModal = ({
   onCancel,
   isEditing,
 }: ScheduleModalProps) => (
-  <div className="bg-[#13272e]/90 fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div className="bg-[#0f181e] p-6 rounded-xl shadow-lg w-full max-w-lg space-y-6">
-      <h2 className="text-2xl font-bold text-center text-[#6be4b9]">
+  <div className="bg-white/70 fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="bg-white border p-6 rounded-xl shadow-2xl w-full max-w-lg space-y-6">
+      <h2 className="text-2xl font-bold text-center text-black">
         {isEditing ? "✏️ Хуваарь засах" : "➕ Хуваарь нэмэх"}
       </h2>
       <div className="space-y-4">
@@ -242,26 +243,26 @@ const ScheduleModal = ({
           value={schedule.event}
           onChange={(e) => setSchedule({ ...schedule, event: e.target.value })}
           placeholder="Үйл явдлын нэр"
-          className="bg-[#0f181e] text-white border border-[#6be4b920] rounded-lg"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg"
         />
         <Input
           type="date"
           value={schedule.date}
           onChange={(e) => setSchedule({ ...schedule, date: e.target.value })}
-          className="bg-[#0f181e] text-white border border-[#6be4b920] rounded-lg"
+          className="bg-[#e9ebee] text-gray-800 border border-[#6be4b920] rounded-lg"
         />
       </div>
       <div className="flex gap-4 pt-4">
         <Button
           onClick={onSave}
-          className="w-full bg-[#6be4b9] text-[#0f181e] font-semibold"
+          className="w-full bg-[#e9ebee] border border-[#5584c6] text-gray-800 hover:bg-[#5584c6] font-semibold"
         >
           Хадгалах
         </Button>
         <Button
           onClick={onCancel}
           variant="outline"
-          className="w-full border-[#6be4b9] text-[#6be4b9]"
+          className="w-full bg-[#e9ebee] text-gray-800 hover:bg-red-500 font-semibold"
         >
           Болих
         </Button>

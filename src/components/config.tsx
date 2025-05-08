@@ -1,15 +1,12 @@
 import { usePathname } from "next/navigation";
-
 import {
-  BarChart,
-  Book,
+  BookOpen,
   CalendarCheck,
-  GraduationCap,
   Home,
   Map,
   MessageSquare,
-  Pencil,
-  Settings,
+  FolderOpen,
+  ClipboardPenLine,
 } from "lucide-react";
 
 export const NavItems = () => {
@@ -37,13 +34,20 @@ export const NavItems = () => {
     {
       name: "Хичээл",
       href: "/lesson",
-      icon: <Book size={20} />,
+      icon: <BookOpen size={20} />,
       active: isNavItemActive(pathname, "/lesson"),
       position: "top",
     },
     {
-      name: "Харилцаа холбоо",
+      name: "Нийтлэл",
       href: "/communicate/student_post",
+      icon: <ClipboardPenLine size={20} />,
+      active: isNavItemActive(pathname, "/communicate"),
+      position: "top",
+    },
+    {
+      name: "Мессеж",
+      href: "/communicate/user",
       icon: <MessageSquare size={20} />,
       active: isNavItemActive(pathname, "/communicate"),
       position: "top",
@@ -58,7 +62,7 @@ export const NavItems = () => {
     {
       name: "Даалгавар",
       href: "/assignment",
-      icon: <Pencil size={20} />,
+      icon: <FolderOpen size={20} />,
       active: isNavItemActive(pathname, "/assignment"),
       position: "top",
     },
