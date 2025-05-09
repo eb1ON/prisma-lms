@@ -12,7 +12,7 @@ const Page = async () => {
   }
 
   return (
-    <body className="min-h-screen w-full relative bg-[#0f181e] text-[#d6faff] overflow-hidden flex items-center justify-center px-4">
+    <body className="min-h-screen min-w-screen max-h-screen max-w-screen relative bg-[#] text-[#d6faff] overflow-hidden flex items-center justify-center px-4">
       {/* ✅ Background Image with slight visibility */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -22,32 +22,32 @@ const Page = async () => {
           className="object-cover opacity-50"
           priority
         />
-        <div className="absolute inset-0 bg-[#0f181e] bg-opacity-50" />
+        <div className="absolute inset-0 bg-[#5584c6] bg-opacity-20" />
       </div>
 
       {/* ✅ Login Card */}
-      <div className="relative z-10 w-full max-w-md bg-[#13272ed9] backdrop-blur-lg p-8 rounded-2xl shadow-xl space-y-8 border border-[#24ffa530] animate-fade-in">
+      <div className="relative z-10 w-full max-w-md bg-white backdrop-blur-lg p-8 pt-4 rounded-2xl shadow-sm shadow-[#5584c6] space-y-8 animate-fade-in">
         {/* ✅ LOGO */}
         <div className="flex justify-center">
-          <div className="w-24 h-24 rounded-full bg-[#0f181e] flex items-center justify-center border border-[#24ffa5] shadow-inner shadow-[#24ffa520] hover:scale-105 transition-transform duration-300">
+          <div className="w-28 h-28 rounded-full flex items-center justify-center shadow-gradient-to-br from-[#a0bbdf] from-40% to-[#c68c8c] shadow-sm hover:scale-105 transition-transform duration-300">
             <Image
               src="/images/moko.png"
               alt="Монгол Коосэн лого"
-              width={64}
-              height={64}
+              width={84}
+              height={84}
               className="object-contain drop-shadow-sm transition duration-300"
             />
           </div>
         </div>
 
         {/* Title */}
-        <h1 className="text-2xl font-bold text-center text-white tracking-tight">
+        <h1 className="text-2xl pt-0 font-bold text-center text-black tracking-tight">
           Нэвтрэх хуудас
         </h1>
 
         {/* Login Form */}
         <form
-          className="space-y-4 w-full"
+          className="space-y-4 pt-0 w-full bg-[#ffffff] rounded-md p-4 shadow-sm "
           action={async (formData) => {
             "use server";
             await executeAction({
@@ -63,7 +63,7 @@ const Page = async () => {
             type="email"
             required
             autoComplete="email"
-            className="w-full p-3 rounded-md bg-[#0f181e] border border-[#2a4c56] text-[#d6faff] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#24ffa5] transition"
+            className="w-full p-3 rounded-md bg-[#ffffff] text-black placeholder-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-white transition"
           />
           <Input
             name="password"
@@ -71,11 +71,11 @@ const Page = async () => {
             type="password"
             required
             autoComplete="current-password"
-            className="w-full p-3 rounded-md bg-[#0f181e] border border-[#2a4c56] text-[#d6faff] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#24ffa5] transition"
+            className="w-full p-3 rounded-md bg-[#ffffff] text-black placeholder-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#24ffa5] transition"
           />
 
           <Button
-            className="w-full bg-[#24ffa5] text-[#0f181e] font-semibold py-3 rounded-md hover:bg-[#1fe697] transition duration-200"
+            className="w-full  bg-[#5584c6] text-[#0f181e] font-semibold py-3 rounded-xl hover:bg-[#92ddce] transition duration-200"
             type="submit"
           >
             Нэвтрэх

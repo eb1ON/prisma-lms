@@ -42,14 +42,14 @@ export const NavItems = () => {
       name: "Нийтлэл",
       href: "/communicate/student_post",
       icon: <ClipboardPenLine size={20} />,
-      active: isNavItemActive(pathname, "/communicate"),
+      active: isNavItemActive(pathname, "/communicate/student_post"),
       position: "top",
     },
     {
       name: "Мессеж",
       href: "/communicate/user",
       icon: <MessageSquare size={20} />,
-      active: isNavItemActive(pathname, "/communicate"),
+      active: isNavItemActive(pathname, "/communicate/user"),
       position: "top",
     },
     {

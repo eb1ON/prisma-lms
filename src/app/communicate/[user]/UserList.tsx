@@ -33,7 +33,7 @@ export default function UserList({
         />
       </div>
 
-      <ul className="space-y-5 px-4 pb-4">
+      <ul className="space-y-2 px-4 pb-4">
         {filteredUsers.map((user) => (
           <li
             key={user.user_id}
@@ -45,7 +45,7 @@ export default function UserList({
             />
             <Link
               href={`/communicate/${user.user_id}`}
-              className="text-foreground hover:text-primary-foreground text-lg font-semibold transition-all"
+              className="text-foreground hover:text-primary-foreground text-md font-semibold transition-all"
             >
               {user.name}
             </Link>

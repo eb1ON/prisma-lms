@@ -31,9 +31,9 @@ export default async function RoadmapPage() {
   ];
 
   return (
-    <div className="w-full mr-8 h-screen overflow-hidden bg-white dark:bg-[#0f181e] text-gray-700 dark:text-gray-200 px-0 ml-12 pt-8">
+    <div className="w-full h-screen bg-white dark:bg-[#0f181e] text-gray-700 dark:text-gray-200 px-1 pt-0">
       {/* Title */}
-      <div className="text-center bg-gray-100 dark:bg-[#13272e] shadow-md w-[1280px] ml-10 rounded-md p-3">
+      <div className="text-center bg-gray-100 dark:bg-[#13272e] shadow-md max-w-5xl mx-auto rounded-md p-4">
         <h1 className="text-3xl font-bold text-gray-700 dark:text-white mb-1">
           Сургалтын агуулга
         </h1>
@@ -43,11 +43,11 @@ export default async function RoadmapPage() {
       </div>
 
       {/* Milestones */}
-      <div className="w-full bg-white dark:bg-[#13272e] rounded-xl mb-8 pr-12 p-6 pt-4">
-        <div className="min-w-[1100px] relative h-[220px]">
+      <div className="w-full bg-white dark:bg-[#13272e] rounded-xl mb-6 p-6 pt-0 max-w-6xl mx-auto">
+        <div className="w-full relative h-[200px]">
           <svg
-            viewBox="0 0 1190 140"
-            className="w-full h-52 absolute top-4 left-8 z-0"
+            viewBox="0 0 1100 140"
+            className="w-full h-full absolute top-0 left-0 z-0"
           >
             <path
               d="M 0 90 Q 150 0, 300 90 T 600 110 T 900 100 T 1100 100"
@@ -70,15 +70,15 @@ export default async function RoadmapPage() {
             {courses.map((course, index) => (
               <div
                 key={course.school_year}
-                className={`flex flex-col items-center w-24 ${yTranslations[index]}`}
+                className={`flex flex-col items-center w-20 ${yTranslations[index]}`}
               >
                 <Link
                   href={`/roadmap/${course.school_year}`}
-                  className="w-16 h-16 rounded-full bg-white dark:bg-[#0f181e] hover:bg-[#5584c6] hover:text-white flex items-center justify-center text-[#5584c6] font-bold text-xl border-2 border-[#5584c6] shadow-md"
+                  className="w-14 h-14 rounded-full bg-white dark:bg-[#0f181e] hover:bg-[#5584c6] hover:text-white flex items-center justify-center text-[#5584c6] font-bold text-xl border-2 border-[#5584c6] shadow-md"
                 >
                   {course.school_year}
                 </Link>
-                <p className="text-sm text-[#5584c6] mt-3">{course.name}</p>
+                <p className="text-xs text-[#5584c6] mt-3">{course.name}</p>
               </div>
             ))}
           </div>
@@ -86,13 +86,13 @@ export default async function RoadmapPage() {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-2 gap-0 h-[300px] ml-10 mr-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
         {/* Donut Chart */}
-        <div className="bg-gray-100 dark:bg-[#13272e] space-y-0 h-[280px] w-[620px] rounded-md shadow-md flex flex-col items-center justify-center border border-gray-200 dark:border-[#264144]">
-          <h2 className="text-lg font-bold text-gray-600 dark:text-gray-300">
+        <div className="bg-gray-100 dark:bg-[#13272e] rounded-md shadow-md p-6 flex flex-col items-center justify-center border border-gray-200 dark:border-[#264144]">
+          <h2 className="text-lg font-bold text-gray-600 dark:text-gray-300 mb-6">
             Ерөнхий болон мэргэжлийн хичээлийн харьцаа
           </h2>
-          <div className="grid grid-cols-5 pt-10 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
             {subjectStats.map((stat) => (
               <div
                 key={stat.year}
@@ -100,7 +100,7 @@ export default async function RoadmapPage() {
               >
                 <svg
                   viewBox="0 0 36 36"
-                  className="w-20 h-20 transform -rotate-90"
+                  className="w-16 h-16 transform -rotate-90"
                 >
                   <circle
                     className="text-gray-300 dark:text-gray-600"
@@ -124,10 +124,10 @@ export default async function RoadmapPage() {
                     cy="18"
                   />
                 </svg>
-                <div className="absolute top-8 text-sm font-bold text-gray-600 dark:text-white">
+                <div className="absolute top-7 text-sm font-bold text-gray-600 dark:text-white">
                   {stat.professional}%
                 </div>
-                <span className="mt-8 text-xs text-gray-700 dark:text-gray-300">
+                <span className="mt-6 text-xs text-gray-700 dark:text-gray-300">
                   {stat.year}
                 </span>
               </div>
@@ -136,8 +136,8 @@ export default async function RoadmapPage() {
         </div>
 
         {/* Line Chart */}
-        <div className="bg-gray-100 dark:bg-[#13272e] rounded-md p-4 pt-10 shadow-md flex flex-col items-center h-[280px] w-[620px] border border-gray-200 dark:border-[#264144]">
-          <h2 className="text-lg font-bold text-gray-600 dark:text-gray-300 mb-3">
+        <div className="bg-gray-100 dark:bg-[#13272e] rounded-md shadow-md p-6 flex flex-col items-center border border-gray-200 dark:border-[#264144]">
+          <h2 className="text-lg font-bold text-gray-600 dark:text-gray-300 mb-4">
             Мэргэжлийн хичээлийн өсөлт
           </h2>
 

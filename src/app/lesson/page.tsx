@@ -25,9 +25,9 @@ const Lesson = async () => {
   return (
     <div className="p-8 min-h-screen w-full space-y-6 bg-background text-foreground">
       <div className="relative flex items-center justify-center">
-        <div className="absolute left-0">
+        {/* <div className="absolute left-0">
           <BackButton />
-        </div>
+        </div> */}
 
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-wide">Хичээлүүд</h1>

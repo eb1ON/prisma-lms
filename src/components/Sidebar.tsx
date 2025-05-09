@@ -3,7 +3,7 @@ import { FaBook, FaList, FaCog } from "react-icons/fa";
 
 const Sidebar: React.FC = () => {
   return (
-    <div className="w-64 bg-[--color-gray-bg] p-6 min-h-screen">
+    <div className="w-56 bg-[--color-gray-bg] p-6 min-h-screen">
       <h1 className="text-2xl font-bold text-[--color-orange] mb-6">
         LMS Admin
       </h1>

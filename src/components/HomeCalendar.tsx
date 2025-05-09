@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
-
 interface Schedule {
   id: string;
-  event: string;
-  date: Date;
+  title: string;
+  date: string;
 }
 
 const weekdays = ["Дав", "Мяг", "Лха", "Пү", "Ба", "Бя", "Ням"];
@@ -44,15 +42,24 @@ export default function Calendar({ events }: { events: Schedule[] }) {
       );
     });
 
+  const upcomingEvents = events
+    .map((event) => ({
+      ...event,
+      dateObj: new Date(event.date),
+    }))
+    .filter((event) => event.dateObj >= today)
+    .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime())
+    .slice(0, 3);
+
   return (
-    <div className="space-y-3 bg-card dark:bg-[#13272e] flex flex-col items-center justify-center rounded-xl h-[430px]">
+    <div className="space-y-4 bg-card dark:bg-[#13272e] flex flex-col items-center justify-center rounded-xl">
       {/* Calendar */}
-      <div className="w-[330px] h-[250px] rounded-xl text-center space-y-4 flex flex-col p-2">
+      <div className="w-[240px] rounded-xl text-center space-y-1 flex flex-col p-2">
         <h2 className="text-xl font-bold text-[#5584c6]">
           {monthNames[currentMonth - 1]}
         </h2>
 
-        <div className="grid grid-cols-7 text-gray-400 dark:text-gray-500 text-sm mb-2">
+        <div className="grid grid-cols-7 text-gray-400 dark:text-gray-500 text-sm">
           {weekdays.map((day) => (
             <div key={day} className="font-normal">
               {day}
@@ -60,59 +67,53 @@ export default function Calendar({ events }: { events: Schedule[] }) {
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-xs">
+        <div className="grid grid-cols-7 gap-1 text-sm">
           {[...Array(firstWeekDay)].map((_, i) => (
             <div key={`empty-${i}`} />
           ))}
 
           {[...Array(daysInMonth)].map((_, i) => {
             const day = i + 1;
-            const event = isEventDay(day);
+            const hasEvent = !!isEventDay(day);
             const isToday = day === todayDate;
 
             return (
               <div
                 key={day}
-                className={`w-6 h-6 rounded-md flex flex-col items-center justify-center transition text-xs
+                className={`w-8 h-8 rounded-md flex items-center justify-center transition
                   ${isToday ? "bg-[#5584c6] text-white font-bold" : ""}
                   ${
-                    event && !isToday
-                      ? "bg-[#e0f7f3] dark:bg-[#264144] text-black dark:text-white font-bold"
+                    hasEvent && !isToday
+                      ? "bg-[#d4ebf9] text-black font-semibold"
                       : ""
                   }
                   ${
-                    !event && !isToday ? "text-gray-500 dark:text-gray-400" : ""
+                    !hasEvent && !isToday
+                      ? "text-gray-500 dark:text-gray-400"
+                      : ""
                   }
                 `}
               >
                 {day}
-                {event && !isToday && (
-                  <span className="text-[4px] text-gray-600 dark:text-gray-400 mt-1">
-                    {event.event}
-                  </span>
-                )}
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Events list */}
-      <div className="bg-[#5584c6] w-[280px] justify-center flex flex-col items-center text-center ml-4 p-2 rounded-xl space-y-1 border border-gray-200 dark:border-[#264144] shadow-sm">
-        <h3 className="text-lg font-bold text-white">🗓️ Үйл явдлууд</h3>
-        {events.length === 0 ? (
-          <p className="text-gray-100 text-md">Үйл явдал алга байна.</p>
+      {/* Upcoming Events */}
+      <div className="bg-[#5584c6] w-[200px] flex flex-col items-center text-center p-3 rounded-xl space-y-2 border border-gray-200 dark:border-[#264144] shadow-sm">
+        <h3 className="text-sm font-bold text-white">🗓️ Тун удахгүй болох</h3>
+        {upcomingEvents.length === 0 ? (
+          <p className="text-gray-100 text-sm">Ойрын үйл явдал алга байна.</p>
         ) : (
-          <ul className="space-y-2 text-md">
-            {events.map((event) => (
+          <ul className="space-y-2 w-full">
+            {upcomingEvents.map((event) => (
               <li
                 key={event.id}
-                className="bg-gray-50 dark:bg-[#1a2a31] rounded-md p-3 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#264144]"
+                className="bg-white dark:bg-[#1a2a31] rounded-md p-2 text-center text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#264144]"
               >
-                <p className="font-semibold text-[#5584c6]">{event.event}</p>
-                <p className="text-md text-gray-400 dark:text-gray-500">
-                  {new Date(event.date).toLocaleDateString("mn-MN")}
-                </p>
+                {event.title}
               </li>
             ))}
           </ul>

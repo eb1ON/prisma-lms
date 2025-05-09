@@ -25,19 +25,11 @@ export default function RootLayout({ children }: LayoutProps) {
       >
         <SessionProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="flex min-w-full min-h-screen">
-              {/* Sidebar */}
-              <div className="hidden sm:block fixed top-0 left-0 h-screen">
+            <div className="flex overflow-hidden min-w-full min-h-screen">
+              <div className="fixed top-0 left-0 h-screen">
                 <SideNav />
               </div>
-
-              {/* Mobile Sidebar placeholder (bottom nav аль хэдийн SideNav дээр байгаа тул энэ хангалттай) */}
-              <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30">
-                <SideNav />
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 w-full transition-all duration-300 ease-in-out sm:ml-[270px]">
+              <div className="flex-1 justify-between min-w-screen w-full ml-[260px] mr-0">
                 {children}
               </div>
             </div>

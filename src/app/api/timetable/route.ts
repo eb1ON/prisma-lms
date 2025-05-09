@@ -42,14 +42,13 @@ export async function POST(request: Request) {
       school_year,
     } = body;
 
-    // Давхцал шалгах (Өдөр + Курс + Цагийн overlap шалгах)
     const conflicts = await db.timetable.findMany({
       where: {
         weekdays,
         school_year,
         AND: [
-          { start_time: { lt: end_time } }, // Эхлэх цаг нь шинэ дуусах цагаас өмнө
-          { end_time: { gt: start_time } }, // Дуусах цаг нь шинэ эхлэх цагаас хойш
+          { start_time: { lt: end_time } },
+          { end_time: { gt: start_time } },
         ],
       },
     });
@@ -99,15 +98,14 @@ export async function PUT(request: Request) {
       school_year,
     } = body;
 
-    // Давхцал шалгах (Өдөр + Курс + Цагийн overlap шалгах, өөрийгөө оруулахгүй)
     const conflicts = await db.timetable.findMany({
       where: {
         weekdays,
         school_year,
         NOT: { id },
         AND: [
-          { start_time: { lt: end_time } }, // Эхлэх цаг нь шинэ дуусах цагаас өмнө
-          { end_time: { gt: start_time } }, // Дуусах цаг нь шинэ эхлэх цагаас хойш
+          { start_time: { lt: end_time } },
+          { end_time: { gt: start_time } },
         ],
       },
     });
@@ -116,7 +114,7 @@ export async function PUT(request: Request) {
       return NextResponse.json(
         {
           error:
-            "Тухайн өдөр, тухайн цагт энэ курст хичээл аль хэдийн орж байгаа тул засах боломжгүй.",
+            "Тухайн өдөр, тухайн цагт энэ курст хичээлтэй байгаа тул засах боломжгүй.",
         },
         { status: 400 }
       );
@@ -134,7 +132,7 @@ export async function PUT(request: Request) {
       },
     });
 
-    return NextResponse.json(timetable, { status: 200 });
+    return NextResponse.json(timetable);
   } catch (error) {
     console.error("Error updating timetable:", error);
     return NextResponse.json(
@@ -161,7 +159,7 @@ export async function DELETE(request: Request) {
       where: { id: Number(id) },
     });
 
-    return NextResponse.json(timetable, { status: 200 });
+    return NextResponse.json(timetable);
   } catch (error) {
     console.error("Error deleting timetable:", error);
     return NextResponse.json(

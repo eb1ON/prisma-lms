@@ -46,10 +46,9 @@ const TimetablePage = () => {
 
   const getTimesFromPair = (pair: string) => {
     const found = pairTimes.find((p) => p.label.startsWith(pair));
-    if (found) {
-      return { start_time: found.start, end_time: found.end };
-    }
-    return { start_time: "", end_time: "" };
+    return found
+      ? { start_time: found.start, end_time: found.end }
+      : { start_time: "", end_time: "" };
   };
 
   const handleAddTimetable = async () => {
@@ -70,7 +69,6 @@ const TimetablePage = () => {
       return;
     }
 
-    // Давхардал шалгах (Ямар ч багш, ямар ч хичээл байсан ч)
     const duplicate = timetable.find(
       (item) =>
         item.weekdays === newTimetable.weekdays &&
@@ -80,7 +78,7 @@ const TimetablePage = () => {
 
     if (duplicate) {
       setErrorMessage(
-        "Тухайн өдөр, тухайн цагт энэ курст хичээл аль хэдийн орж байгаа тул дахин нэмэх боломжгүй!"
+        "Тухайн өдөр, тухайн цагт энэ курст хичээл орж байгаа тул дахин нэмэх боломжгүй!"
       );
       return;
     }
@@ -133,12 +131,6 @@ const TimetablePage = () => {
 
     const times = getTimesFromPair(editTimetable.pair);
 
-    if (!times.start_time || !times.end_time) {
-      setEditErrorMessage("Цаг зөв сонгоно уу!");
-      return;
-    }
-
-    // Давхардал шалгах (Ямар ч багш, ямар ч хичээл байсан ч) | Засах үед өөрийгөө үл тооцно
     const duplicate = timetable.find(
       (item) =>
         item.weekdays === editTimetable.weekdays &&
@@ -149,7 +141,7 @@ const TimetablePage = () => {
 
     if (duplicate) {
       setEditErrorMessage(
-        "Тухайн өдөр, тухайн цагт энэ курст хичээл аль хэдийн орж байгаа тул дахин засах боломжгүй!"
+        "Тухайн өдөр, цагт энэ курст хичээл аль хэдийн орж байгаа тул дахин засах боломжгүй!"
       );
       return;
     }
@@ -183,7 +175,15 @@ const TimetablePage = () => {
 
   const handleDeleteTimetable = async (id: string) => {
     if (!confirm("Устгахдаа итгэлтэй байна уу?")) return;
-    await fetch("/api/timetable?id=${id}", { method: "DELETE" });
+
+    const res = await fetch(`/api/timetable?id=${id}`, { method: "DELETE" });
+
+    if (!res.ok) {
+      const error = await res.json();
+      alert(error.error || "Устгах үед алдаа гарлаа");
+      return;
+    }
+
     await fetchTimetable();
   };
 

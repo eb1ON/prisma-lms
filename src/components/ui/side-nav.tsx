@@ -50,19 +50,19 @@ export default function SideNav() {
             )}
           >
             <aside className="flex flex-col w-full h-full overflow-x-hidden">
-              <div className="mt-10 ml-6 mr-3">
+              <div className="mt-6 ml-6 mr-3">
                 <div className="flex flex-col space-y-1 items-center justify-between space-x-2 mb-4">
                   <img
                     src="/images/logo-side-nav.png"
                     alt="err"
-                    className="w-12 h-10"
+                    className="w-10 h-8"
                   />
-                  <h1 className="font-extrabold text-xl pt-0 text-center bg-gradient-to-br from-[#5584c6] from-20% to-[#C23436] to-80% bg-clip-text text-transparent flex justify-start">
+                  <h1 className="font-extrabold text-lg pt-0 text-center bg-gradient-to-br from-[#5584c6] from-20% to-[#C23436] to-80% bg-clip-text text-transparent flex justify-start">
                     Цахим сургалтын систем
                   </h1>
                 </div>
 
-                <div className="flex flex-col space-y-5 mt-16">
+                <div className="flex flex-col space-y-4 mt-8">
                   {navItems.map((item, idx) =>
                     item.position === "top" ? (
                       <Fragment key={idx}>
@@ -155,7 +155,7 @@ export const SideNavItem: React.FC<{
           : "hover:bg-[#1E356A] hover:text-white text-gray-600 font-bold dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
       }`}
     >
-      <div className="w-full font-base text-md py-1.5 px-2 flex items-center space-x-7 rounded-md">
+      <div className="w-full font-base text-sm py-1 px-2 flex items-center space-x-7 rounded-md">
         {icon}
         <span>{label}</span>
       </div>
@@ -168,16 +168,16 @@ export const SideNavItem: React.FC<{
             href={path}
             className={`relative flex items-center rounded-md ${
               active
-                ? "font-base text-xl text-[#5584c6] dark:bg-neutral-800 dark:text-white"
+                ? "font-base text-lg text-[#5584c6] dark:bg-neutral-800 dark:text-white"
                 : "hover:bg-[#5584c6] hover:text-white text-muted-foreground dark:hover:bg-neutral-800 dark:hover:text-white"
             }`}
           >
-            <div className="p-2">{icon}</div>
+            <div className="p-1">{icon}</div>
           </Link>
         </TooltipTrigger>
         <TooltipContent
           side="left"
-          className="px-3 py-1.5 text-xl"
+          className="px-2 py-0 text-lg"
           sideOffset={10}
         >
           <span>{label}</span>
